@@ -34,3 +34,12 @@ func (player *Player) OnTouchUp(*engine.Point) {
 func (player *Player) OnVanish() {
 
 }
+
+func (player *Player) OnMessage(msg engine.Message){
+	if damage, ok := msg.(DamageMessage); ok {
+		player.life -= float32(damage)
+		if player.life < 0{
+			// On Game Over
+		}
+	}
+}

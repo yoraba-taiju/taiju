@@ -4,6 +4,14 @@ import (
 	"taiju/engine"
 )
 
+type Friend interface {
+	engine.Actor
+}
+
+type FriendStrategy interface {
+	Move(Friend);
+}
+
 type FriendBase struct {
 	engine.ActorBase
 	speed  engine.Vector

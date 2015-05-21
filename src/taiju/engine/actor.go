@@ -7,26 +7,30 @@ type Message interface {
 }
 
 type Actor interface {
+	Scene() *Scene
+	SendMessage(Message)
+	// 
 	Name() string
 	SetName(string) error
+	//
 	DrawLevel() float32
 	SetDrawLevel(float32)
-	Scene() *Scene
+	//
 	Position() Point
 	Size() Vector
 	IsHit(Actor) bool
+	//
 	Move()
 	Draw(*DrawContext)
+	//
 	Vanish()
 	IsAlive() bool
-	
+	//
 	OnTouch(*Point) bool
 	OnSlide(*Point, *Vector) bool
 	OnTouchUp(*Point)
 	OnVanish()
 	OnMessage(Message)
-	
-	SendMessage(Message)
 }
 
 // ベースとなる、一応基本的な処理は備えているクラス
