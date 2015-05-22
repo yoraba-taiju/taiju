@@ -15,6 +15,16 @@ func main() {
 	log.Printf("              Yoraba Taiju")
 	log.Printf("----------------------------------------")
 	
+	var err error
 	game := engine.NewGame(g.NewWorld())
-	game.Run()
+	err = game.Init(800,600,"Yoraba Taiju")
+	if err != nil{
+		panic(err)
+	}
+	defer game.Exit()
+	err=game.Run()
+	if err != nil{
+		panic(err)
+	}
+	log.Printf("Successfully Closed.")
 }

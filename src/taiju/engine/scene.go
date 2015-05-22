@@ -83,12 +83,15 @@ func (scene *Scene) CallActor(name string) Actor {
 		return nil
 	}
 }
+
 func (scene *Scene) SendMessage(msg Message) {
 	scene.OnMessage(msg)
 }
+
 func (scene *Scene) OnMessage(msg Message) {
 
 }
+
 func (scene *Scene) Move() {
 	for _, actor := range scene.actors {
 		actor.Move()
@@ -116,12 +119,15 @@ type DrawSort []Actor
 func (self DrawSort) Len() int {
 	return len(self)
 }
+
 func (self DrawSort) Less(i, j int) bool {
 	return self[i].DrawLevel() < self[j].DrawLevel()
 }
+
 func (self DrawSort) Swap(i, j int) {
 	self[i], self[j] = self[j], self[i]
 }
+
 func (scene *Scene) Draw(ctx *DrawContext) {
 	sort.Sort(DrawSort(scene.actors))
 	for _, actor := range scene.actors {
