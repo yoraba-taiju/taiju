@@ -5,12 +5,12 @@ import (
 )
 
 type Player struct {
-	engine.ActorBase
+	engine.MultiActorBase
 	life float32
 }
 
 func NewPlayer() engine.Actor {
-	player := &Player{}
+	player := &Player{ MultiActorBase: engine.NewMultiActorBase() }
 	player.SetName("Player")
 	player.life = 100
 	return player
@@ -29,6 +29,9 @@ func (player *Player) OnSlide(*engine.Point, *engine.Vector) bool {
 	return false
 }
 func (player *Player) OnTouchUp(*engine.Point) {
+
+}
+func (player *Player) OnAppear() {
 
 }
 func (player *Player) OnVanish() {

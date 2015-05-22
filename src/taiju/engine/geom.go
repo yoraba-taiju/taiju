@@ -4,6 +4,15 @@ import (
 
 )
 
+type Matrix struct {
+	values [16]float32
+}
+
+func (m *Matrix) mult(o *Matrix) *Matrix{
+	
+	return m;
+}
+
 type Vector struct{
 	X float32
 	Y float32

@@ -8,6 +8,12 @@ type BulletBase struct {
 	engine.ActorBase
 }
 
+func NewBulletBase() BulletBase {
+	return BulletBase{ ActorBase: engine.NewActorBase() }
+}
+
+//弾一つで進むだけのバレット
+
 type NormalBullet struct {
 	BulletBase
 	speed  engine.Vector
@@ -15,11 +21,11 @@ type NormalBullet struct {
 }
 
 func NewNormalBullet() engine.Actor {
-	return &NormalBullet{}
+	return &NormalBullet{ BulletBase: NewBulletBase() }
 }
 
 func (bullet *NormalBullet) Move() {
-	bullet.SelfPosition.Add(bullet.speed)
+	bullet.Position_.Add(bullet.speed)
 	if !bullet.IsHit(bullet.Scene()) {
 		bullet.Vanish()
 	}
@@ -41,6 +47,9 @@ func (bullet *NormalBullet) OnSlide(*engine.Point, *engine.Vector) bool {
 }
 func (bullet *NormalBullet) OnTouchUp(*engine.Point) {
 	// DO NOTHING
+}
+func (bullet *NormalBullet) OnAppear() {
+
 }
 func (bullet *NormalBullet) OnVanish() {
 

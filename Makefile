@@ -5,5 +5,8 @@ all:
 
 get:
 
+clean:
+	rm -Rf pkg bin
+
 cl:
 	find . -name *.go | xargs wc -l
