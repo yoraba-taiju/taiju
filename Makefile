@@ -1,9 +1,14 @@
-.PHONY: all get cl
+.PHONY: all get run clean cl
 
 all:
-	echo ""
+	gofmt -w src/
+	GOPATH=$(shell pwd):${GOPATH} GOBIN=$(shell pwd)/bin go install -v -gcflags -N ./...
 
 get:
+	GOPATH=$(shell pwd):${GOPATH} GOBIN=$(shell pwd)/bin go get github.com/go-gl/glfw
+
+run:
+	bin/taiju
 
 clean:
 	rm -Rf pkg bin

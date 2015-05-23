@@ -10,7 +10,7 @@ type Player struct {
 }
 
 func NewPlayer() engine.Actor {
-	player := &Player{ MultiActorBase: engine.NewMultiActorBase() }
+	player := &Player{MultiActorBase: engine.NewMultiActorBase()}
 	player.SetName("Player")
 	player.life = 100
 	return player
@@ -38,10 +38,10 @@ func (player *Player) OnVanish() {
 
 }
 
-func (player *Player) OnMessage(msg engine.Message){
+func (player *Player) OnMessage(msg engine.Message) {
 	if damage, ok := msg.(DamageMessage); ok {
 		player.life -= float32(damage)
-		if player.life < 0{
+		if player.life < 0 {
 			// On Game Over
 		}
 	}

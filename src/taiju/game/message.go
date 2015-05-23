@@ -1,11 +1,9 @@
 package game
 
-import (
-
-)
+import ()
 
 type DamageMessage float32
 
-func NewDamageMessage(value float32) DamageMessage{
-	return DamageMessage(value);
+func NewDamageMessage(value float32) DamageMessage {
+	return DamageMessage(value)
 }

@@ -9,7 +9,7 @@ type BulletBase struct {
 }
 
 func NewBulletBase() BulletBase {
-	return BulletBase{ ActorBase: engine.NewActorBase() }
+	return BulletBase{ActorBase: engine.NewActorBase()}
 }
 
 //弾一つで進むだけのバレット
@@ -21,7 +21,7 @@ type NormalBullet struct {
 }
 
 func NewNormalBullet() engine.Actor {
-	return &NormalBullet{ BulletBase: NewBulletBase() }
+	return &NormalBullet{BulletBase: NewBulletBase()}
 }
 
 func (bullet *NormalBullet) Move() {
@@ -30,7 +30,7 @@ func (bullet *NormalBullet) Move() {
 		bullet.Vanish()
 	}
 	player := bullet.Scene().CallActor("Player")
-	if player != nil{
+	if player != nil {
 		if player.IsHit(bullet) {
 			player.SendMessage(NewDamageMessage(bullet.damage))
 		}

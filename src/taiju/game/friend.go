@@ -9,7 +9,7 @@ type Friend interface {
 }
 
 type FriendStrategy interface {
-	Move(Friend);
+	Move(Friend)
 }
 
 type FriendBase struct {

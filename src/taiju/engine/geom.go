@@ -1,31 +1,29 @@
 package engine
 
-import (
-
-)
+import ()
 
 type Matrix struct {
 	values [16]float32
 }
 
-func (m *Matrix) mult(o *Matrix) *Matrix{
-	
-	return m;
+func (m *Matrix) mult(o *Matrix) *Matrix {
+
+	return m
 }
 
-type Vector struct{
+type Vector struct {
 	X float32
 	Y float32
 }
-type Point Vector;
+type Point Vector
 
 func (p *Point) Add(v Vector) *Point {
-	p.X += v.X;
-	p.Y += v.Y;
-	return p;
+	p.X += v.X
+	p.Y += v.Y
+	return p
 }
 
-func IsHitBox(mp Point, ms Vector, op Point, os Vector) bool{
+func IsHitBox(mp Point, ms Vector, op Point, os Vector) bool {
 	mx1 := mp.X - os.X/2
 	mx2 := mp.X + os.X/2
 	my1 := mp.Y - os.Y/2

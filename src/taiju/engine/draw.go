@@ -1,14 +1,12 @@
 package engine
 
-import (
-
-)
+import ()
 
 type Affine interface {
 }
 
-type DrawContext interface{
-	Draw(Point,Drawable)
+type DrawContext interface {
+	Draw(Point, Drawable)
 	Trans(Affine) DrawContext
 }
 
