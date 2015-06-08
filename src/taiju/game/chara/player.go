@@ -1,7 +1,9 @@
-package game
+package chara
 
 import (
 	"taiju/engine"
+	"taiju/game/id"
+	"taiju/game/msg"
 )
 
 type Player struct {
@@ -11,7 +13,7 @@ type Player struct {
 
 func NewPlayer() engine.Behavior {
 	player := &Player{}
-	player.SetID(PlayerID)
+	player.SetID(id.Player)
 	player.life = 100
 	return player
 }
@@ -38,8 +40,8 @@ func (player *Player) OnVanish(act engine.Actor) {
 
 }
 
-func (player *Player) OnMessage(act engine.Actor,msg engine.Message) {
-	if damage, ok := msg.(DamageMessage); ok {
+func (player *Player) OnMessage(act engine.Actor,message engine.Message) {
+	if damage, ok := message.(msg.DamageMessage); ok {
 		player.life -= float32(damage)
 		if player.life < 0 {
 			// On Game Over

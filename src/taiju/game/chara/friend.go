@@ -1,4 +1,4 @@
-package game
+package chara
 
 import (
 	"taiju/engine"

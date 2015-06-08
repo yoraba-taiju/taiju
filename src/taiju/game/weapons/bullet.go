@@ -2,6 +2,8 @@ package game
 
 import (
 	"taiju/engine"
+	"taiju/game/msg"
+	"taiju/game/id"
 )
 
 //弾一つで進むだけのバレット
@@ -19,10 +21,10 @@ func (bullet *NormalBullet) Move(act engine.Actor) {
 	if !act.IsHit(act.Scene()) {
 		act.Vanish()
 	}
-	player := act.FindActor(PlayerID)
+	player := act.FindActor(id.Player)
 	if player != nil {
 		if player.IsHit(act) {
-			player.SendMessage(NewDamageMessage(bullet.damage))
+			player.SendMessage(msg.NewDamageMessage(bullet.damage))
 		}
 	}
 }
