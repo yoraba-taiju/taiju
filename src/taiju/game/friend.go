@@ -4,34 +4,42 @@ import (
 	"taiju/engine"
 )
 
-type Friend interface {
-	engine.Actor
-}
+type Friend engine.Actor
 
 type FriendStrategy interface {
 	Move(Friend)
 }
 
 type FriendBase struct {
-	engine.ActorBase
 	speed  engine.Vector
 	damage float32
 }
 
-func (FriendBase *FriendBase) Move() {
+func NewFriendBehavior() engine.Behavior{
+	behavior := &FriendBase{}
+	return behavior;
 }
-func (FriendBase *FriendBase) Draw(*engine.DrawContext) {
+
+func (FriendBase *FriendBase) Move(act engine.Actor) {
+}
+func (FriendBase *FriendBase) Draw(act engine.Actor, ctx *engine.DrawContext) {
 
 }
-func (FriendBase *FriendBase) OnTouch(*engine.Point) bool {
+func (FriendBase *FriendBase) OnTouch(act engine.Actor, pt *engine.Point) bool {
 	return false
 }
-func (FriendBase *FriendBase) OnSlide(*engine.Point, *engine.Vector) bool {
+func (FriendBase *FriendBase) OnSlide(act engine.Actor, pt *engine.Point, vec *engine.Vector) bool {
 	return false
 }
-func (FriendBase *FriendBase) OnTouchUp(*engine.Point) {
+func (FriendBase *FriendBase) OnTouchUp(act engine.Actor, pt *engine.Point) {
 
 }
-func (FriendBase *FriendBase) OnVanish() {
+func (FriendBase *FriendBase) OnVanish(act engine.Actor) {
+
+}
+func (FriendBase *FriendBase) OnAppear(act engine.Actor) {
+
+}
+func (FriendBase *FriendBase) OnMessage(act engine.Actor, msg engine.Message) {
 
 }

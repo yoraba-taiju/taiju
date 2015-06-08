@@ -4,53 +4,46 @@ import (
 	"taiju/engine"
 )
 
-type BulletBase struct {
-	engine.ActorBase
-}
-
-func NewBulletBase() BulletBase {
-	return BulletBase{ActorBase: engine.NewActorBase()}
-}
-
 //弾一つで進むだけのバレット
 
 type NormalBullet struct {
-	BulletBase
 	speed  engine.Vector
 	damage float32
 }
 
-func NewNormalBullet() engine.Actor {
-	return &NormalBullet{BulletBase: NewBulletBase()}
+func NewNormalBullet(damage float32) engine.Behavior {
+	return &NormalBullet{engine.Vector{0,0}, damage}
 }
 
-func (bullet *NormalBullet) Move() {
-	bullet.Position_.Add(bullet.speed)
-	if !bullet.IsHit(bullet.Scene()) {
-		bullet.Vanish()
+func (bullet *NormalBullet) Move(act engine.Actor) {
+	if !act.IsHit(act.Scene()) {
+		act.Vanish()
 	}
-	player := bullet.Scene().FindActor(PlayerID)
+	player := act.FindActor(PlayerID)
 	if player != nil {
-		if player.IsHit(bullet) {
+		if player.IsHit(act) {
 			player.SendMessage(NewDamageMessage(bullet.damage))
 		}
 	}
 }
-func (bullet *NormalBullet) Draw(*engine.DrawContext) {
+func (bullet *NormalBullet) Draw(act engine.Actor, ctx *engine.DrawContext) {
 
 }
-func (bullet *NormalBullet) OnTouch(*engine.Point) bool {
+func (bullet *NormalBullet) OnTouch(act engine.Actor, pt *engine.Point) bool {
 	return false //DO NOTHING
 }
-func (bullet *NormalBullet) OnSlide(*engine.Point, *engine.Vector) bool {
+func (bullet *NormalBullet) OnSlide(act engine.Actor, pt *engine.Point, vec *engine.Vector) bool {
 	return false // DO NOTHING
 }
-func (bullet *NormalBullet) OnTouchUp(*engine.Point) {
+func (bullet *NormalBullet) OnTouchUp(act engine.Actor, pt*engine.Point) {
 	// DO NOTHING
 }
-func (bullet *NormalBullet) OnAppear() {
+func (bullet *NormalBullet) OnAppear(act engine.Actor) {
 
 }
-func (bullet *NormalBullet) OnVanish() {
+func (bullet *NormalBullet) OnVanish(act engine.Actor) {
+
+}
+func (bullet *NormalBullet) OnMessage(act engine.Actor, msg engine.Message) {
 
 }

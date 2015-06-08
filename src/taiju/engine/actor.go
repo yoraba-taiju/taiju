@@ -191,9 +191,6 @@ type MultiActorBase struct {
 	children []Actor
 }
 
-func NewMultiActorBase() MultiActorBase {
-	return MultiActorBase{}
-}
 func (actor *MultiActorBase) NotifyChildDeath() {
 	actor.parent.NotifyChildDeath()
 }
