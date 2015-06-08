@@ -10,10 +10,13 @@ type World interface {
 	Move(float32) (bool, error)
 	Render(DrawContext) error
 	ChangeScene(Scene)
+	NotifySceneDeath(Scene)
+	NewScene(SceneBehavior) Scene
 }
 
 type WorldBase struct {
 	DesiredFPS float32
+	currentScene Scene
 }
 
 func NewWorldBase(fps float32) WorldBase {
@@ -31,6 +34,21 @@ func (base *WorldBase) Fps() float32 {
 func (base *WorldBase) Render(ctx DrawContext) error {
 	return nil
 }
-func (base *WorldBase) ChangeScene(scene Scene) {
 
+/**
+ *  Sceme Life Cycle
+ */
+
+func (base *WorldBase) NewScene(sb SceneBehavior) Scene{
+	return NewScene(base, sb)
+}
+func (base *WorldBase) ChangeScene(scene Scene) {
+	if base.currentScene != nil{
+		base.currentScene.Vanish()
+	}
+	base.currentScene = scene
+	scene.OnAppear()
+}
+func (base *WorldBase) NotifySceneDeath(scene Scene) {
+	base.currentScene = nil
 }

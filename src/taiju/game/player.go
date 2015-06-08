@@ -11,7 +11,7 @@ type Player struct {
 
 func NewPlayer() engine.Actor {
 	player := &Player{MultiActorBase: engine.NewMultiActorBase()}
-	player.SetName("Player")
+	player.SetID(PlayerID)
 	player.life = 100
 	return player
 }

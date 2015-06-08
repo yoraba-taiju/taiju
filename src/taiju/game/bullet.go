@@ -29,7 +29,7 @@ func (bullet *NormalBullet) Move() {
 	if !bullet.IsHit(bullet.Scene()) {
 		bullet.Vanish()
 	}
-	player := bullet.Scene().CallActor("Player")
+	player := bullet.Scene().FindActor(PlayerID)
 	if player != nil {
 		if player.IsHit(bullet) {
 			player.SendMessage(NewDamageMessage(bullet.damage))
