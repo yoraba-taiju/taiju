@@ -166,8 +166,8 @@
 		6D02C79F1B3321650018DEA8 /* MainGameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainGameScene.cpp; sourceTree = "<group>"; };
 		6D02C7A01B3321650018DEA8 /* MainGameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainGameScene.h; sourceTree = "<group>"; };
 		6D02C7A31B3327E40018DEA8 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
-		6D02C7A51B33469F0018DEA8 /* Team.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Team.cpp; path = ../chara/Team.cpp; sourceTree = "<group>"; };
-		6D02C7A61B33469F0018DEA8 /* Team.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Team.h; path = ../chara/Team.h; sourceTree = "<group>"; };
+		6D02C7A51B33469F0018DEA8 /* Team.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Team.cpp; sourceTree = "<group>"; };
+		6D02C7A61B33469F0018DEA8 /* Team.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Team.h; sourceTree = "<group>"; };
 		6D02C7A91B3356D00018DEA8 /* Friend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Friend.cpp; sourceTree = "<group>"; };
 		6D02C7AA1B3356D00018DEA8 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
 		6D02C7AD1B3359500018DEA8 /* HUD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HUD.cpp; sourceTree = "<group>"; };
@@ -373,6 +373,8 @@
 		6D02C78E1B3319810018DEA8 /* chara */ = {
 			isa = PBXGroup;
 			children = (
+				6D02C7A51B33469F0018DEA8 /* Team.cpp */,
+				6D02C7A61B33469F0018DEA8 /* Team.h */,
 				6D02C7921B331A780018DEA8 /* Sora.cpp */,
 				6D02C7931B331A780018DEA8 /* Sora.h */,
 				6D02C7A91B3356D00018DEA8 /* Friend.cpp */,
@@ -407,8 +409,6 @@
 		6D02C7971B331BB20018DEA8 /* core */ = {
 			isa = PBXGroup;
 			children = (
-				6D02C7A51B33469F0018DEA8 /* Team.cpp */,
-				6D02C7A61B33469F0018DEA8 /* Team.h */,
 				6D02C7981B331C050018DEA8 /* GameLayer.cpp */,
 				6D02C7991B331C050018DEA8 /* GameLayer.h */,
 				6D02C7AD1B3359500018DEA8 /* HUD.cpp */,
