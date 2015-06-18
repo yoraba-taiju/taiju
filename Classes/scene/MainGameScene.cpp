@@ -40,7 +40,6 @@ bool MainGameScene::init()
                                            "CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(MainGameScene::menuCloseCallback, this));
-    
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
 
@@ -73,11 +72,21 @@ bool MainGameScene::init()
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
 	
-	auto gameHeight = std::min(visibleSize.width * 3 / 4, visibleSize.height);
-	auto gameWidth = gameHeight * 3 / 4;
+	
+	float gameHeight;
+	float gameWidth;
+	
+	if(visibleSize.width > visibleSize.height * 3 / 4){
+		gameHeight = std::min(visibleSize.width * 3 / 4, visibleSize.height);
+		gameWidth  = gameHeight * 3 / 4;
+	}else{
+		gameWidth = std::min(visibleSize.height * 4 / 3, visibleSize.width);
+		gameHeight = gameWidth * 4 / 3;
+	}
+	
 	auto size = cocos2d::Size(gameWidth, gameHeight);
 	auto gameLayer = GameLayer::create(size);
-	gameLayer->setPosition((visibleSize-size)/2);
+	gameLayer->setPosition(origin + (visibleSize-size)/2);
 	this->addChild(gameLayer);
 
 	return true;
