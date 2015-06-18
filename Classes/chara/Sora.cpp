@@ -1,14 +1,14 @@
 
 #include "../core/GameLayer.h"
-#include "Player.h"
+#include "Sora.h"
 using namespace cocos2d;
 
-Player::Player(){
+Sora::Sora(){
 	
 }
 
-bool Player::init() {
-	Layer::init();
+bool Sora::init() {
+	Friend::init();
 	auto spr = Sprite::create("CloseNormal.png");
 	this->addChild(spr);
 	this->sprite_ = spr;
@@ -16,7 +16,7 @@ bool Player::init() {
 	return true;
 }
 
-void Player::move(cocos2d::Vec2 const& delta){
+void Sora::move(cocos2d::Vec2 const& delta){
 	auto parent = static_cast<GameLayer*>(this->getParent());
 	auto fSize = parent->getContentSize();
 	auto next = this->getPosition() + delta - (fSize/2);
@@ -36,4 +36,7 @@ void Player::move(cocos2d::Vec2 const& delta){
 	this->setPosition(next + (fSize/2));
 }
 
+void Sora::OnVanished(){
+	//TODO: ゲームオーバー
 
+}

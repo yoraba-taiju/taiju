@@ -1,5 +1,5 @@
 #include "GameLayer.h"
-#include "../chara/Player.h"
+#include "../chara/Sora.h"
 
 using namespace cocos2d;
 
@@ -11,7 +11,7 @@ bool GameLayer::init(cocos2d::Size fieldSize) {
 	this->LayerColor::init();
 	this->setColor(cocos2d::Color3B::GRAY);
 	this->setOpacity(255);
-	auto player = Player::create();
+	auto player = Sora::create();
 	player->setTag(TAG_PLAYER);
 	this->addChild(player);
 	this->setContentSize(fieldSize);
@@ -35,8 +35,8 @@ bool GameLayer::onTouchBegan(cocos2d::Touch* touch,cocos2d::Event* event) {
 	return true;
 }
 void GameLayer::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event) {
-	Player* player = static_cast<Player*>(this->getChildByTag(TAG_PLAYER));
-	player->move(touch->getDelta());
+	Sora* sora = static_cast<Sora*>(this->getChildByTag(TAG_PLAYER));
+	sora->move(touch->getDelta());
 }
 void GameLayer::onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event) {
 	

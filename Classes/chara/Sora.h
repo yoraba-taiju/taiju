@@ -1,14 +1,16 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "../Util.h"
+#include "Friend.h"
 
-class Player : public cocos2d::Layer {
+class Sora : public Friend {
 private:
 	cocos2d::Sprite* sprite_;
 public:
-	Player();
+	Sora();
 	virtual bool init() override;
 	void move(cocos2d::Vec2 const& delta);
-	CREATE_FUNC(Player);
+	CREATE_FUNC(Sora);
+public:
+	virtual void OnVanished() override;
 };

@@ -57,14 +57,18 @@
 		521A8EA919F11F5000D177D7 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 521A8EA819F11F5000D177D7 /* fonts */; };
 		521A8EAA19F11F5000D177D7 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 521A8EA819F11F5000D177D7 /* fonts */; };
 		52B47A471A53D09C004E4C60 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B47A461A53D09B004E4C60 /* Security.framework */; };
-		6D02C7941B331A780018DEA8 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7921B331A780018DEA8 /* Player.cpp */; };
-		6D02C7951B331A780018DEA8 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7921B331A780018DEA8 /* Player.cpp */; };
+		6D02C7941B331A780018DEA8 /* Sora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7921B331A780018DEA8 /* Sora.cpp */; };
+		6D02C7951B331A780018DEA8 /* Sora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7921B331A780018DEA8 /* Sora.cpp */; };
 		6D02C79A1B331C050018DEA8 /* GameLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7981B331C050018DEA8 /* GameLayer.cpp */; };
 		6D02C79B1B331C050018DEA8 /* GameLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7981B331C050018DEA8 /* GameLayer.cpp */; };
 		6D02C7A11B3321650018DEA8 /* MainGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C79F1B3321650018DEA8 /* MainGameScene.cpp */; };
 		6D02C7A21B3321650018DEA8 /* MainGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C79F1B3321650018DEA8 /* MainGameScene.cpp */; };
 		6D02C7A71B33469F0018DEA8 /* Team.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7A51B33469F0018DEA8 /* Team.cpp */; };
 		6D02C7A81B33469F0018DEA8 /* Team.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7A51B33469F0018DEA8 /* Team.cpp */; };
+		6D02C7AB1B3356D00018DEA8 /* Friend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7A91B3356D00018DEA8 /* Friend.cpp */; };
+		6D02C7AC1B3356D00018DEA8 /* Friend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7A91B3356D00018DEA8 /* Friend.cpp */; };
+		6D02C7AF1B3359500018DEA8 /* HUD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7AD1B3359500018DEA8 /* HUD.cpp */; };
+		6D02C7B01B3359500018DEA8 /* HUD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7AD1B3359500018DEA8 /* HUD.cpp */; };
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
@@ -155,8 +159,8 @@
 		521A8E6319F0C34300D177D7 /* Default-736h@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-736h@3x.png"; sourceTree = "<group>"; };
 		521A8EA819F11F5000D177D7 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		52B47A461A53D09B004E4C60 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
-		6D02C7921B331A780018DEA8 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
-		6D02C7931B331A780018DEA8 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Player.h; sourceTree = "<group>"; };
+		6D02C7921B331A780018DEA8 /* Sora.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sora.cpp; sourceTree = "<group>"; };
+		6D02C7931B331A780018DEA8 /* Sora.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sora.h; sourceTree = "<group>"; };
 		6D02C7981B331C050018DEA8 /* GameLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameLayer.cpp; sourceTree = "<group>"; };
 		6D02C7991B331C050018DEA8 /* GameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameLayer.h; sourceTree = "<group>"; };
 		6D02C79F1B3321650018DEA8 /* MainGameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainGameScene.cpp; sourceTree = "<group>"; };
@@ -164,6 +168,10 @@
 		6D02C7A31B3327E40018DEA8 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		6D02C7A51B33469F0018DEA8 /* Team.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Team.cpp; path = ../chara/Team.cpp; sourceTree = "<group>"; };
 		6D02C7A61B33469F0018DEA8 /* Team.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Team.h; path = ../chara/Team.h; sourceTree = "<group>"; };
+		6D02C7A91B3356D00018DEA8 /* Friend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Friend.cpp; sourceTree = "<group>"; };
+		6D02C7AA1B3356D00018DEA8 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
+		6D02C7AD1B3359500018DEA8 /* HUD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HUD.cpp; sourceTree = "<group>"; };
+		6D02C7AE1B3359500018DEA8 /* HUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HUD.h; sourceTree = "<group>"; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -365,8 +373,10 @@
 		6D02C78E1B3319810018DEA8 /* chara */ = {
 			isa = PBXGroup;
 			children = (
-				6D02C7921B331A780018DEA8 /* Player.cpp */,
-				6D02C7931B331A780018DEA8 /* Player.h */,
+				6D02C7921B331A780018DEA8 /* Sora.cpp */,
+				6D02C7931B331A780018DEA8 /* Sora.h */,
+				6D02C7A91B3356D00018DEA8 /* Friend.cpp */,
+				6D02C7AA1B3356D00018DEA8 /* Friend.h */,
 			);
 			path = chara;
 			sourceTree = "<group>";
@@ -401,6 +411,8 @@
 				6D02C7A61B33469F0018DEA8 /* Team.h */,
 				6D02C7981B331C050018DEA8 /* GameLayer.cpp */,
 				6D02C7991B331C050018DEA8 /* GameLayer.h */,
+				6D02C7AD1B3359500018DEA8 /* HUD.cpp */,
+				6D02C7AE1B3359500018DEA8 /* HUD.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -553,12 +565,14 @@
 			files = (
 				6D02C7A71B33469F0018DEA8 /* Team.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
-				6D02C7941B331A780018DEA8 /* Player.cpp in Sources */,
+				6D02C7941B331A780018DEA8 /* Sora.cpp in Sources */,
+				6D02C7AB1B3356D00018DEA8 /* Friend.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				6D02C7A11B3321650018DEA8 /* MainGameScene.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				6D02C79A1B331C050018DEA8 /* GameLayer.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
+				6D02C7AF1B3359500018DEA8 /* HUD.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,8 +581,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D02C7A81B33469F0018DEA8 /* Team.cpp in Sources */,
+				6D02C7B01B3359500018DEA8 /* HUD.cpp in Sources */,
 				6D02C79B1B331C050018DEA8 /* GameLayer.cpp in Sources */,
-				6D02C7951B331A780018DEA8 /* Player.cpp in Sources */,
+				6D02C7951B331A780018DEA8 /* Sora.cpp in Sources */,
+				6D02C7AC1B3356D00018DEA8 /* Friend.cpp in Sources */,
 				6D02C7A21B3321650018DEA8 /* MainGameScene.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
