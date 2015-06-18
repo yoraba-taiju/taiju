@@ -63,6 +63,8 @@
 		6D02C79B1B331C050018DEA8 /* GameLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7981B331C050018DEA8 /* GameLayer.cpp */; };
 		6D02C7A11B3321650018DEA8 /* MainGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C79F1B3321650018DEA8 /* MainGameScene.cpp */; };
 		6D02C7A21B3321650018DEA8 /* MainGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C79F1B3321650018DEA8 /* MainGameScene.cpp */; };
+		6D02C7A71B33469F0018DEA8 /* Team.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7A51B33469F0018DEA8 /* Team.cpp */; };
+		6D02C7A81B33469F0018DEA8 /* Team.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7A51B33469F0018DEA8 /* Team.cpp */; };
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
@@ -160,6 +162,8 @@
 		6D02C79F1B3321650018DEA8 /* MainGameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainGameScene.cpp; sourceTree = "<group>"; };
 		6D02C7A01B3321650018DEA8 /* MainGameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainGameScene.h; sourceTree = "<group>"; };
 		6D02C7A31B3327E40018DEA8 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
+		6D02C7A51B33469F0018DEA8 /* Team.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Team.cpp; path = ../chara/Team.cpp; sourceTree = "<group>"; };
+		6D02C7A61B33469F0018DEA8 /* Team.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Team.h; path = ../chara/Team.h; sourceTree = "<group>"; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -393,6 +397,8 @@
 		6D02C7971B331BB20018DEA8 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				6D02C7A51B33469F0018DEA8 /* Team.cpp */,
+				6D02C7A61B33469F0018DEA8 /* Team.h */,
 				6D02C7981B331C050018DEA8 /* GameLayer.cpp */,
 				6D02C7991B331C050018DEA8 /* GameLayer.h */,
 			);
@@ -545,6 +551,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D02C7A71B33469F0018DEA8 /* Team.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				6D02C7941B331A780018DEA8 /* Player.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
@@ -559,6 +566,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D02C7A81B33469F0018DEA8 /* Team.cpp in Sources */,
 				6D02C79B1B331C050018DEA8 /* GameLayer.cpp in Sources */,
 				6D02C7951B331A780018DEA8 /* Player.cpp in Sources */,
 				6D02C7A21B3321650018DEA8 /* MainGameScene.cpp in Sources */,
