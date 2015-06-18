@@ -18,7 +18,7 @@ bool Player::init() {
 
 void Player::move(cocos2d::Vec2 const& delta){
 	auto parent = static_cast<GameLayer*>(this->getParent());
-	auto fSize = parent->getFieldSize();
+	auto fSize = parent->getContentSize();
 	auto next = this->getPosition() + delta - (fSize/2);
 	auto bbox = this->sprite_->getBoundingBox();
 	auto size = (fSize - bbox.size)/2;

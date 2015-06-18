@@ -8,12 +8,14 @@ GameLayer::GameLayer(){
 }
 
 bool GameLayer::init(cocos2d::Size fieldSize) {
-	this->Layer::init();
-	this->fieldSize = fieldSize;
+	this->LayerColor::init();
+	this->setColor(cocos2d::Color3B::GRAY);
+	this->setOpacity(255);
 	auto player = Player::create();
 	player->setTag(TAG_PLAYER);
 	this->addChild(player);
-	player->setPosition(this->fieldSize/2);
+	this->setContentSize(fieldSize);
+	player->setPosition(fieldSize/2);
 	
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);

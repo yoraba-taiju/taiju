@@ -3,12 +3,9 @@
 #include "cocos2d.h"
 #include "../Util.h"
 
-class GameLayer : public cocos2d::Layer {
+class GameLayer : public cocos2d::LayerColor {
 private:
 	static const constexpr int TAG_PLAYER=1;
-	cocos2d::Size fieldSize;
-public:
-	cocos2d::Size getFieldSize() const { return this->fieldSize; };
 public:
 	GameLayer();
 	bool init(cocos2d::Size screenSize);
