@@ -69,6 +69,12 @@
 		6D02C7AC1B3356D00018DEA8 /* Friend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7A91B3356D00018DEA8 /* Friend.cpp */; };
 		6D02C7AF1B3359500018DEA8 /* HUD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7AD1B3359500018DEA8 /* HUD.cpp */; };
 		6D02C7B01B3359500018DEA8 /* HUD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7AD1B3359500018DEA8 /* HUD.cpp */; };
+		6D02C7B61B3B105C0018DEA8 /* BulletGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7B41B3B105C0018DEA8 /* BulletGenerator.cpp */; };
+		6D02C7B71B3B105C0018DEA8 /* BulletGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7B41B3B105C0018DEA8 /* BulletGenerator.cpp */; };
+		6D02C7BA1B3B17670018DEA8 /* BulletManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7B81B3B17670018DEA8 /* BulletManager.cpp */; };
+		6D02C7BB1B3B17670018DEA8 /* BulletManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7B81B3B17670018DEA8 /* BulletManager.cpp */; };
+		6D02C7BE1B3B17980018DEA8 /* Bullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7BC1B3B17980018DEA8 /* Bullet.cpp */; };
+		6D02C7BF1B3B17980018DEA8 /* Bullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D02C7BC1B3B17980018DEA8 /* Bullet.cpp */; };
 		8262943E1AAF051F00CB7CF7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8262943D1AAF051F00CB7CF7 /* Security.framework */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
@@ -172,6 +178,12 @@
 		6D02C7AA1B3356D00018DEA8 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
 		6D02C7AD1B3359500018DEA8 /* HUD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HUD.cpp; sourceTree = "<group>"; };
 		6D02C7AE1B3359500018DEA8 /* HUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HUD.h; sourceTree = "<group>"; };
+		6D02C7B41B3B105C0018DEA8 /* BulletGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BulletGenerator.cpp; sourceTree = "<group>"; };
+		6D02C7B51B3B105C0018DEA8 /* BulletGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BulletGenerator.h; sourceTree = "<group>"; };
+		6D02C7B81B3B17670018DEA8 /* BulletManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BulletManager.cpp; sourceTree = "<group>"; };
+		6D02C7B91B3B17670018DEA8 /* BulletManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BulletManager.h; sourceTree = "<group>"; };
+		6D02C7BC1B3B17980018DEA8 /* Bullet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bullet.cpp; sourceTree = "<group>"; };
+		6D02C7BD1B3B17980018DEA8 /* Bullet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bullet.h; sourceTree = "<group>"; };
 		8262943D1AAF051F00CB7CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -402,6 +414,12 @@
 		6D02C7911B331A320018DEA8 /* bullet */ = {
 			isa = PBXGroup;
 			children = (
+				6D02C7B41B3B105C0018DEA8 /* BulletGenerator.cpp */,
+				6D02C7B51B3B105C0018DEA8 /* BulletGenerator.h */,
+				6D02C7B81B3B17670018DEA8 /* BulletManager.cpp */,
+				6D02C7B91B3B17670018DEA8 /* BulletManager.h */,
+				6D02C7BC1B3B17980018DEA8 /* Bullet.cpp */,
+				6D02C7BD1B3B17980018DEA8 /* Bullet.h */,
 			);
 			path = bullet;
 			sourceTree = "<group>";
@@ -572,7 +590,10 @@
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				6D02C79A1B331C050018DEA8 /* GameLayer.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
+				6D02C7BA1B3B17670018DEA8 /* BulletManager.cpp in Sources */,
+				6D02C7B61B3B105C0018DEA8 /* BulletGenerator.cpp in Sources */,
 				6D02C7AF1B3359500018DEA8 /* HUD.cpp in Sources */,
+				6D02C7BE1B3B17980018DEA8 /* Bullet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,8 +604,11 @@
 				6D02C7A81B33469F0018DEA8 /* Team.cpp in Sources */,
 				6D02C7B01B3359500018DEA8 /* HUD.cpp in Sources */,
 				6D02C79B1B331C050018DEA8 /* GameLayer.cpp in Sources */,
+				6D02C7BB1B3B17670018DEA8 /* BulletManager.cpp in Sources */,
+				6D02C7B71B3B105C0018DEA8 /* BulletGenerator.cpp in Sources */,
 				6D02C7951B331A780018DEA8 /* Sora.cpp in Sources */,
 				6D02C7AC1B3356D00018DEA8 /* Friend.cpp in Sources */,
+				6D02C7BF1B3B17980018DEA8 /* Bullet.cpp in Sources */,
 				6D02C7A21B3321650018DEA8 /* MainGameScene.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,

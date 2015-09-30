@@ -17,5 +17,5 @@ public:
 	bool onTouchBegan(cocos2d::Touch* touch,cocos2d::Event* event);
 	void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
-	CREATE_FUNC_WITH_ARG(GameLayer, cocos2d::Size);
+	CREATE_FUNC1(GameLayer, cocos2d::Size);
 };
