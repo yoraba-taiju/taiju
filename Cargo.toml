@@ -7,5 +7,6 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-amethyst = {version = "0.15.3", features = ["vulkan", "audio"] }
-amethyst-imgui = "0.7.1"
+#bevy = { path="../bevy/" }
+#bevy = { git="https://github.com/bevyengine/bevy.git", rev="f520a34" }
+amethyst = { path="../amethyst" }
