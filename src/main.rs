@@ -8,6 +8,7 @@ use amethyst::ecs::*;
 use amethyst::core::transform::TransformBundle;
 use amethyst::renderer::rendy::core::hal::command::ClearColor;
 use amethyst::assets::LoaderBundle;
+use amethyst::renderer::bundle::Target;
 
 mod taiju;
 
@@ -37,10 +38,9 @@ fn main() -> amethyst::Result<()> {
               float32: [0.0, 0.0, 0.0, 1.0]
             }), //rgba background
         )
-        .with_plugin(RenderShaded3D::default())
+        .with_plugin(RenderPbr3D::default().with_target(Target::Main))
         //.with_plugin(RenderUi::default()),
     );
-
 
   // Set up the core application.
   let mut game: Application<GameData> =

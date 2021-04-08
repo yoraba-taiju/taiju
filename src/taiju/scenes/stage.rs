@@ -23,42 +23,62 @@ use amethyst::{
   window::ScreenDimensions,
   Application, GameData, SimpleState, SimpleTrans, StateData, Trans,
 };
+use amethyst::ecs::query::Query;
+
+pub mod components;
+pub mod systems;
 
 pub struct StageState {
+  schedule: Schedule,
 }
 
 impl StageState {
   pub fn new() -> Self {
     Self {
+      schedule: Schedule::builder().build(),
     }
   }
 }
 
 impl SimpleState for StageState {
   fn on_start(&mut self, data: StateData<'_, GameData>) {
+    {
+      let mut schedule = Schedule::builder()
+        .add_system(SystemBuilder::new("TestSystem")
+          .read_component::<Transform>()
+          .build(
+            move |commands, world, resource, queries| {
+              let mut q = <(Entity, Read<Transform>)>::query().filter(!component::<()>());
+              for (entity, pos) in q.iter_mut(world) {
+                //println!("{:?}: {:?}", entity, pos)
+              }
+            },
+          ))
+        .build();
+      std::mem::swap(&mut self.schedule, &mut schedule);
+    }
     let loader = data.resources.get::<DefaultLoader>().unwrap();
     let mesh_storage = data.resources.get::<ProcessingQueue<MeshData>>().unwrap();
     let tex_storage = data.resources.get::<ProcessingQueue<TextureData>>().unwrap();
     let mtl_storage = data.resources.get::<ProcessingQueue<Material>>().unwrap();
     {
       let mut transform = Transform::default();
-      transform.set_translation_xyz(0.0, 0.0, -12.0);
-      transform.prepend_rotation_y_axis(std::f32::consts::PI);
+      transform.set_translation_xyz(0.0, 0.0, 12.0);
 
       let (width, height) = {
         let dim = data.resources.get::<ScreenDimensions>().unwrap();
         (dim.width(), dim.height())
       };
 
-      data.world.extend(vec![(
+      data.world.push((
         Camera::standard_3d(width, height),
         transform,
-      )]);
+      ));
     }
 
     {
       let mut transform = Transform::default();
-      transform.set_translation_xyz(6.0, 6.0, -6.0);
+      transform.set_translation_xyz(6.0, 6.0, 6.0);
 
       let light: Light = PointLight {
         intensity: 5.0,
@@ -66,10 +86,10 @@ impl SimpleState for StageState {
         ..PointLight::default()
       }.into();
 
-      data.world.extend(vec![(
+      data.world.push((
         light,
         transform,
-      )]);
+      ));
     }
 
     {
@@ -104,12 +124,12 @@ impl SimpleState for StageState {
         )
       };
       let mut pos = Transform::default();
-      pos.set_translation_xyz(0.0, 0.0, 10.0);
-      data.world.extend(vec![(
+      pos.set_translation_xyz(0.0, 0.0, -14.0);
+      data.world.push((
         pos,
         mesh.clone(),
         mtl,
-      )]);
+      ));
     }
 
     {
@@ -144,16 +164,21 @@ impl SimpleState for StageState {
         )
       };
       let mut pos = Transform::default();
-      pos.set_translation_xyz(0.0, 0.0, -1.0);
-      data.world.extend(vec![(
+      pos.set_translation_xyz(0.0, 0.0, 1.0);
+      data.world.push((
         pos,
         mesh,
         mtl,
-      )]);
+      ));
     }
   }
 
   fn fixed_update(&mut self, _data: StateData<'_, GameData>) -> SimpleTrans {
+    Trans::None
+  }
+
+  fn update(&mut self, data: &mut StateData<'_, GameData>) -> SimpleTrans {
+    self.schedule.execute(data.world, data.resources);
     Trans::None
   }
 }

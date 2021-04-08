@@ -9,4 +9,8 @@ edition = "2018"
 [dependencies]
 #bevy = { path="../bevy/" }
 #bevy = { git="https://github.com/bevyengine/bevy.git", rev="f520a34" }
-amethyst = { path="../amethyst" }
+
+[dependencies.amethyst]
+path="../amethyst"
+default-features=false
+features=["parallel", "renderer", "utils", "no-slow-safety-checks"]
