@@ -26,7 +26,7 @@ pub fn setup(
   commands.spawn()
     .insert_bundle(SpriteBundle {
       material: materials.add(Color::rgb(0.5, 0.5, 1.0).into()),
-      transform: Transform::from_xyz(0.0, -100.0, 0.0),
+      transform: Transform::from_xyz(0.0, -540.0+50., 0.0),
       sprite: Sprite::new(Vec2::new(100.0, 100.0)),
       ..Default::default()
     })
