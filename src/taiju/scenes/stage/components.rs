@@ -1,6 +1,7 @@
 pub mod witches;
 pub use witches::*;
 
+#[derive(Default, Debug)]
 pub struct Position {
   pub x: f32,
   pub y: f32,

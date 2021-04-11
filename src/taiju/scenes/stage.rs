@@ -26,8 +26,8 @@ pub fn setup(
   commands.spawn()
     .insert_bundle(SpriteBundle {
       material: materials.add(Color::rgb(0.5, 0.5, 1.0).into()),
-      transform: Transform::from_xyz(0.0, -540.0+50., 0.0),
-      sprite: Sprite::new(Vec2::new(100.0, 100.0)),
+      transform: Transform::from_xyz(0.0, 0.0, 0.0),
+      sprite: Sprite::new(Vec2::new(10.0, 10.0)),
       ..Default::default()
     })
     .insert(Sora {
@@ -38,8 +38,8 @@ pub fn setup(
     })
     .insert(Position {
       x: 0.0,
-      y: 0.,
-      w: 10.,
-      h: 10.,
+      y: 0.0,
+      w: 10.0,
+      h: 10.0,
     });
 }
