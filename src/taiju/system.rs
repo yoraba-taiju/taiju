@@ -12,10 +12,6 @@ pub struct UserInput {
   pub y: f32,
 }
 
-pub fn clear_input(mut input: ResMut<UserInput>) {
-  //*input = Default::default();
-}
-
 pub fn gamepad_events(mut input: ResMut<UserInput>, mut gamepad_event: EventReader<GamepadEvent>) {
   for event in gamepad_event.iter() {
     match &event {
