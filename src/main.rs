@@ -1,7 +1,10 @@
 use bevy::prelude::*;
+
 use crate::taiju::system::UserInput;
 
 mod taiju;
+pub mod donut;
+
 fn main() {
   App::build()
     .insert_resource(WindowDescriptor {

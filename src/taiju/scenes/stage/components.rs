@@ -1,5 +1,8 @@
 pub mod witches;
+pub mod background;
+
 pub use witches::*;
+pub use background::*;
 
 #[derive(Default, Debug)]
 pub struct Position {
