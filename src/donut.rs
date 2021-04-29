@@ -97,8 +97,8 @@ impl <T> Value<T> {
     }
     while beg < end {
       let mid = beg + (end - beg)/2;
-      let t = self.history[mid % RECORD_FRAMES].time.ticks;
-      if t < ticks {
+      let mid_t = self.history[mid % RECORD_FRAMES].time.ticks;
+      if mid_t < ticks {
         beg = mid + 1;
       } else {
         end = mid - 1;
