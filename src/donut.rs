@@ -25,6 +25,7 @@ impl SubjectiveTime {
   }
 }
 
+pub type ClockRef = Arc<Clock>;
 pub struct Clock {
   current: RwLock<SubjectiveTime>,
   leap_intersection: RwLock<Vec<u32>>,
@@ -52,7 +53,7 @@ impl Debug for Clock {
 }
 
 impl Clock {
-  fn new() -> Arc<Self> {
+  pub(crate) fn new() -> ClockRef {
     Arc::new(Self {
       current: RwLock::new(SubjectiveTime{
         leaps: 0,
@@ -179,9 +180,11 @@ impl <T: Clone> Value<T> {
       Some(beg - 1)
     }
   }
+  #[cfg(test)]
   pub(crate) fn capacity(&self) -> usize {
     self.history.capacity()
   }
+  #[cfg(test)]
   pub(crate) fn len(&self) -> usize {
     self.history.len()
   }
@@ -265,10 +268,17 @@ mod test {
     assert_eq!(100, *value);
   }
   #[test]
-  fn check_capacity() {
+  fn check_capacity_and_len() {
     let clock = Clock::new();
-    let value = Value::<u32>::new(&clock, 0);
+    let  mut value = Value::<u32>::new(&clock, 0);
+    assert_eq!(1, value.len());
     assert_eq!(RECORD_FRAMES, value.capacity());
+    *value = 1;
+    assert_eq!(1, value.len());
+    clock.tick();
+    assert_eq!(1, value.len());
+    *value = 2;
+    assert_eq!(2, value.len());
   }
   #[test]
   fn value_test_with_leap() {

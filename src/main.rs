@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 use crate::taiju::system::UserInput;
+use crate::donut::{Clock, ClockRef};
 
 mod taiju;
 pub mod donut;
@@ -14,6 +15,7 @@ fn main() {
       vsync: true,
       ..Default::default()
     })
+    .insert_resource::<ClockRef>(Clock::new())
     .add_plugins(DefaultPlugins)
     .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.9)))
     .insert_resource(UserInput::default())
