@@ -2,6 +2,8 @@ use std::sync::{Arc, Weak, RwLock};
 use std::ops::{Deref, DerefMut};
 use std::sync::atomic::Ordering;
 use bevy::utils::tracing::Instrument;
+use std::cmp::min;
+use std::fmt::{Debug, Formatter};
 
 const RECORD_FRAMES: usize = 600;
 
@@ -22,6 +24,28 @@ impl SubjectiveTime {
 
 pub struct Clock {
   current: RwLock<SubjectiveTime>,
+  leap_intersection: RwLock<Vec<u32>>,
+}
+
+impl Debug for Clock {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    let current = self.current.read().unwrap();
+    let leap_intersections_str = {
+      let inner = self.leap_intersection.read().unwrap()
+        .iter()
+        .enumerate()
+        .map(|(i,t)| format!("(idx={}, time={})", i, t))
+        .collect::<Vec<String>>()
+        .join(", ");
+      format!("[{}]", inner)
+    };
+
+    f.debug_struct("Clock")
+      .field("current leaps", &current.leaps)
+      .field("current ticks", &current.ticks)
+      .field("leap intersections", &leap_intersections_str)
+      .finish()
+  }
 }
 
 impl Clock {
@@ -31,15 +55,12 @@ impl Clock {
         leaps: 0,
         ticks: 0,
       }),
+      leap_intersection: RwLock::new(Vec::new()),
     })
   }
-  fn subjective_time(&self) -> SubjectiveTime {
+  fn current_time(&self) -> SubjectiveTime {
     let t = self.current.read().expect("Failed to lock Clock (read)");
     t.deref().clone()
-  }
-  fn objective_time(&self) -> u32 {
-    let t = self.current.read().expect("Failed to lock Clock (read)");
-    t.ticks
   }
   fn tick(&self) -> u32 {
     let mut t = self.current.write().expect("Failed to lock Clock (write)");
@@ -47,10 +68,26 @@ impl Clock {
     t.ticks
   }
   fn leap(&self, ticks: u32) -> SubjectiveTime {
-    let mut t = self.current.write().expect("Failed to lock Clock (write)");
-    t.leaps += 1;
-    t.ticks = ticks;
-    t.clone()
+    let mut current = self.current.write().expect("Failed to lock Clock (write)");
+    let mut leap_intersection = self.leap_intersection.write().expect("Failed to lock intersection");
+    current.leaps += 1;
+    current.ticks = ticks;
+    for old_branch in leap_intersection.iter_mut() {
+      if ticks < *old_branch {
+        *old_branch = ticks;
+      }
+    }
+    leap_intersection.push(ticks);
+    current.clone()
+  }
+  fn adjust_read_time(&self, value_time: SubjectiveTime) -> u32 {
+    let current = self.current.read().expect("Failed to lock Clock (write)");
+    let leap_intersection = self.leap_intersection.read().expect("Failed to lock intersection");
+    if value_time.leaps == current.leaps {
+      value_time.ticks
+    } else {
+      min(leap_intersection[(value_time.leaps) as usize], value_time.ticks)
+    }
   }
 }
 
@@ -68,58 +105,111 @@ impl <T> ValueEntry<T> {
   }
 }
 
-pub struct Value<T> {
+pub struct Value<T: Clone> {
   clock: Weak<Clock>,
-  history: Vec<ValueEntry<T>>,
-  begin: usize,
-  end: usize,
+  history: heapless::Vec<ValueEntry<T>, heapless::consts::U600>,
 }
 
-impl <T> Value<T> {
+impl <T: Debug + Clone> Debug for Value<T> {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    let history_str = {
+      let inner = self.history
+        .iter()
+        .map(|entry| format!("([{}, {}] = {:?})", &entry.time.leaps, &entry.time.ticks, &entry.value))
+        .collect::<Vec<String>>()
+        .join(", ");
+      format!("[{}]", inner)
+    };
+    f.write_str(&format!("Value: {}", &history_str))
+  }
+}
+
+impl <T: Clone> Value<T> {
   fn new(clock: &Arc<Clock>, initial: T) -> Self {
-    Self {
+    let mut s = Self {
       clock: Arc::downgrade(clock),
-      history: vec![ValueEntry::new(clock.subjective_time(), initial)],
-      begin: 0,
-      end: 1,
-    }
+      history: heapless::Vec::new(),
+    };
+    s.history.push(ValueEntry::new(clock.current_time(), initial));
+    s
   }
   pub(crate) fn find_write_index(&self, subjective_time: SubjectiveTime) -> usize {
     let mut beg: usize;
     let mut end: usize;
     let ticks = subjective_time.ticks;
-    if self.begin < self.end {
-      beg = self.begin;
-      end = self.end;
-    } else {
-      beg = self.begin;
-      end = self.end + RECORD_FRAMES;
-    }
+    beg = 0;
+    end = self.history.len();
     while beg < end {
       let mid = beg + (end - beg)/2;
-      let mid_t = self.history[mid % RECORD_FRAMES].time.ticks;
+      let mid_t = self.history[mid].time.ticks;
       if mid_t < ticks {
         beg = mid + 1;
       } else {
-        end = mid - 1;
+        end = mid;
       }
     }
     return end;
   }
+  pub(crate) fn find_read_index(&self, adjusted_time: u32) -> Option<usize> {
+    let mut beg: usize = 0;
+    let mut end: usize = self.history.len();
+    while beg < end {
+      let mid = beg + (end - beg)/2;
+      let mid_t = self.history[mid].time.ticks;
+      if mid_t <= adjusted_time {
+        beg = mid + 1;
+      } else {
+        end = mid;
+      }
+    }
+    if end == 0 {
+      None
+    } else {
+      Some(beg - 1)
+    }
+  }
 }
 
-impl <T> Deref for Value<T> {
+impl <T: Clone> Deref for Value<T> {
   type Target = T;
 
   fn deref(&self) -> &Self::Target {
     let clock = self.clock.upgrade().unwrap();
-    &self.history[0].value
+    let time = clock.adjust_read_time(self.history.last().unwrap().time);
+    let idx = self.find_read_index(time).unwrap();
+    if idx == self.history.len() {
+      panic!("Do not refer non-existent value!")
+    }
+    &self.history[idx].value
   }
 }
 
-impl <T> DerefMut for Value<T> {
+impl <T: Clone> DerefMut for Value<T> {
   fn deref_mut(&mut self) -> &mut Self::Target {
-    todo!()
+    let clock = self.clock.upgrade().expect("Clock was missing.");
+    let time = clock.current_time();
+    let idx = self.find_write_index(time);
+    if idx == self.history.capacity() {
+      self.history.pop();
+      self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone()));
+      &mut (self.history[idx - 1].value)
+    }else if idx == self.history.len() {
+      self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone()));
+      &mut (self.history[idx].value)
+    }else{
+      if idx + 1 < self.history.len() {
+        self.history.truncate(idx + 1);
+      }
+      let (current, pasts) = self.history.split_last_mut().unwrap();
+      if time.ticks < current.time.ticks {
+        panic!("Do not refer non-existent value!")
+      }
+      if current.time.ticks < time.ticks {
+        current.value = pasts[pasts.len()-1].value.clone();
+      }
+      current.time = time;
+      &mut (current.value)
+    }
   }
 }
 
@@ -129,28 +219,81 @@ mod test {
 
   #[test]
   fn clock_tick() {
-    let mut clock = Clock::new();
-    assert_eq!(SubjectiveTime::new(0, 0), clock.subjective_time());
+    let clock = Clock::new();
+    assert_eq!(SubjectiveTime::new(0, 0), clock.current_time());
     clock.tick();
-    assert_eq!(SubjectiveTime::new(0, 1), clock.subjective_time());
+    assert_eq!(SubjectiveTime::new(0, 1), clock.current_time());
   }
   #[test]
   fn leap_test() {
-    let mut clock = Clock::new();
+    let clock = Clock::new();
     clock.tick();
     clock.tick();
     clock.leap(1);
-    assert_eq!(SubjectiveTime::new(1, 1), clock.subjective_time());
+    assert_eq!(SubjectiveTime::new(1, 1), clock.current_time());
   }
 
   #[test]
   fn simple_value_test() {
-    let mut clock = Clock::new();
+    let clock = Clock::new();
     let mut value = Value::<u32>::new(&clock, 0);
+    *value = 10;
+    assert_eq!(10, *value);
     clock.tick();
+    *value = 100;
     clock.tick();
-    assert_eq!(1, value.find_write_index(clock.subjective_time()));
+    assert_eq!(100, *value);
     clock.leap(1);
-    //assert_eq!(Some(&0u32), value.value());
+    assert_eq!(100, *value);
+  }
+  #[test]
+  fn value_test_with_leap() {
+    let clock = Clock::new();
+    let mut value = Value::<u32>::new(&clock, 0);
+    clock.tick(); // tick = 1
+    *value = 1;
+    clock.tick(); // tick = 2
+    *value = 2;
+    clock.leap(1); // tick = 1
+    assert_eq!(1, *value);
+    clock.tick(); // tick = 2
+    clock.tick(); // tick = 3
+    clock.leap(1); // tick = 1
+    assert_eq!(1, *value);
+    clock.tick(); // tick = 2
+    *value = 22;
+    clock.tick(); // tick = 3
+    clock.leap(2); // tick = 2
+    assert_eq!(22, *value);
+    clock.leap(1); // tick = 1
+    assert_eq!(1, *value);
+  }
+  #[test]
+  fn value_test_with_single() {
+    let clock = Clock::new();
+    let mut value = Value::<u32>::new(&clock, 0);
+    *value = 1;
+    clock.tick(); // tick = 1
+    clock.leap(0); // leap = 1, ticks = 0
+    *value = 2;
+    assert_eq!(2, *value);
+  }
+  #[test]
+  #[should_panic]
+  fn read_future_value() {
+    let clock = Clock::new();
+    clock.tick(); // ticks = 1
+    let value = Value::<u32>::new(&clock, 0);
+    clock.leap(0); // ticks = 0
+    let _unused = *value;
+  }
+  #[test]
+  #[should_panic]
+  fn write_future_value() {
+    let clock = Clock::new();
+    clock.tick(); // ticks = 1
+    let mut value = Value::<u32>::new(&clock, 0);
+    clock.leap(0); // ticks = 0
+    *value = 10;
   }
 }
