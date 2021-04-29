@@ -17,8 +17,8 @@ pub struct UserInput {
 pub fn handle_input_events(
   mut input: ResMut<UserInput>,
   keyboard_input: Res<Input<KeyCode>>,
-  mut gamepad_event: EventReader<GamepadEvent>)
-{
+  mut gamepad_event: EventReader<GamepadEvent>,
+) {
   let mut x: f32 = 0.0;
   let mut y: f32 = 0.0;
   for event in gamepad_event.iter() {
