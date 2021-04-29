@@ -273,6 +273,8 @@ mod test {
     assert_eq!(100, *value);
     clock.leap(1);
     assert_eq!(100, *value);
+    clock.tick();
+    assert_eq!(100, *value);
   }
   #[test]
   fn check_capacity_and_len() {
