@@ -1,7 +1,12 @@
-use bevy::prelude::*;
-use crate::donut::ClockRef;
-use crate::scenes::stage::components::*;
-use crate::system::UserInput;
+use crate::scenes::stage::prelude::*;
+
+enum EventType {
+
+}
+
+struct Event {
+
+}
 
 pub struct ScenarioDirector {
 

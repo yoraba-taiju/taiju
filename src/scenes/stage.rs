@@ -1,8 +1,10 @@
 use bevy::prelude::*;
 
-use crate::donut::ClockRef;
 pub mod components;
-pub mod systems;
+pub mod resources;
+pub mod prelude;
+
+use prelude::*;
 
 pub struct StageScene {
 }
@@ -21,7 +23,7 @@ pub fn setup(
   asset_server: Res<AssetServer>,
 ) {
   {
-    use crate::scenes::stage::systems::scenario::ScenarioDirector;
+    use crate::scenes::stage::resources::scenario::ScenarioDirector;
     commands.insert_resource(ScenarioDirector::load(asset_server));
   }
   use components::*;
