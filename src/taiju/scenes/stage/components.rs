@@ -3,11 +3,12 @@ pub mod background;
 
 pub use witches::*;
 pub use background::*;
+use crate::donut::Value;
 
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct Position {
-  pub x: f32,
-  pub y: f32,
-  pub w: f32,
-  pub h: f32,
+  pub x: Value<f32>,
+  pub y: Value<f32>,
+  pub w: Value<f32>,
+  pub h: Value<f32>,
 }

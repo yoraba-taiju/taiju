@@ -20,8 +20,8 @@ fn main() {
     .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.9)))
     .insert_resource(UserInput::default())
     .add_startup_system(taiju::scenes::stage::setup.system())
-    .add_system_to_stage(CoreStage::PreUpdate, taiju::system::gamepad_events.system())
-    .add_system_to_stage(CoreStage::PreUpdate, taiju::system::keyboard_events.system())
+    .add_system_to_stage(CoreStage::PreUpdate, taiju::system::input_events.system())
+    .add_system_to_stage(CoreStage::PreUpdate, taiju::system::control_clock.system())
     .add_system(taiju::scenes::stage::systems::move_sora.system())
     .add_system(taiju::scenes::stage::systems::transform.system())
     .run();

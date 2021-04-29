@@ -5,14 +5,22 @@ use bevy::{
   },
   prelude::*,
 };
+use crate::donut::ClockRef;
 
 #[derive(Default)]
 pub struct UserInput {
   pub x: f32,
   pub y: f32,
+  pub clock_direction: i8,
 }
 
-pub fn gamepad_events(mut input: ResMut<UserInput>, mut gamepad_event: EventReader<GamepadEvent>) {
+pub fn input_events(
+  mut input: ResMut<UserInput>,
+  keyboard_input: Res<Input<KeyCode>>,
+  mut gamepad_event: EventReader<GamepadEvent>)
+{
+  let mut x: f32 = 0.0;
+  let mut y: f32 = 0.0;
   for event in gamepad_event.iter() {
     match &event {
       GamepadEvent(gamepad, GamepadEventType::Connected) => {
@@ -27,10 +35,10 @@ pub fn gamepad_events(mut input: ResMut<UserInput>, mut gamepad_event: EventRead
       GamepadEvent(gamepad, GamepadEventType::AxisChanged(axis_type, value)) => {
         match axis_type {
           &GamepadAxisType::DPadX => {
-            input.x = *value;
+            x += *value;
           },
           &GamepadAxisType::DPadY=> {
-            input.y = *value;
+            y += *value;
           }
           _ => {}
         };
@@ -38,14 +46,34 @@ pub fn gamepad_events(mut input: ResMut<UserInput>, mut gamepad_event: EventRead
       }
     }
   }
+  if keyboard_input.pressed(KeyCode::Up) {
+    y += 1.0;
+  }
+  if keyboard_input.pressed(KeyCode::Down) {
+    y -= 1.0;
+  }
+  if keyboard_input.pressed(KeyCode::Left) {
+    x += -1.0;
+  }
+  if keyboard_input.pressed(KeyCode::Right) {
+    x += 1.0;
+  }
+  input.clock_direction = 1;
+  if keyboard_input.pressed(KeyCode::X) {
+    input.clock_direction = -1;
+  }
+  input.x = x;
+  input.y = y;
 }
 
-pub fn keyboard_events(mut input: ResMut<UserInput>, keyboard_input: Res<Input<KeyCode>>) {
-  if keyboard_input.just_pressed(KeyCode::A) {
-    println!("'A' just pressed");
-  }
-
-  if keyboard_input.just_released(KeyCode::A) {
-    println!("'A' just released");
+pub fn control_clock(
+  input: Res<UserInput>,
+  clock: Res<ClockRef>,
+)
+{
+  if input.clock_direction < 0 {
+    clock.leap(clock.current_tick() - 1);
+  }else{
+    clock.tick();
   }
 }

@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::donut::ClockRef;
 
 pub mod components;
 pub mod systems;
@@ -15,6 +16,7 @@ impl StageScene {
 
 pub fn setup(
   mut commands: Commands,
+  clock: Res<ClockRef>,
   mut materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
 ) {
@@ -33,13 +35,13 @@ pub fn setup(
     .insert(Sora {
     })
     .insert(Witch {
-      health: 100,
-      spell: 100,
+      health: clock.value(100),
+      spell: clock.value(100),
     })
     .insert(Position {
-      x: 0.0,
-      y: 0.0,
-      w: 10.0,
-      h: 10.0,
+      x: clock.value(0.0),
+      y: clock.value(0.0),
+      w: clock.value(0.0),
+      h: clock.value(0.0),
     });
 }

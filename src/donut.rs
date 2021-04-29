@@ -62,16 +62,23 @@ impl Clock {
       leap_intersection: RwLock::new(Vec::new()),
     })
   }
-  fn current_time(&self) -> SubjectiveTime {
+  pub fn value<T: Clone>(self: &Arc<Self>, value: T) -> Value<T> {
+    Value::new(self, value)
+  }
+  pub fn current_time(&self) -> SubjectiveTime {
     let t = self.current.read().expect("Failed to lock Clock (read)");
     t.deref().clone()
   }
-  fn tick(&self) -> u32 {
+  pub fn current_tick(&self) -> u32 {
+    let t = self.current.read().expect("Failed to lock Clock (read)");
+    t.deref().ticks
+  }
+  pub fn tick(&self) -> u32 {
     let mut t = self.current.write().expect("Failed to lock Clock (write)");
     t.ticks += 1;
     t.ticks
   }
-  fn leap(&self, ticks: u32) -> SubjectiveTime {
+  pub(crate) fn leap(&self, ticks: u32) -> SubjectiveTime {
     let mut current = self.current.write().expect("Failed to lock Clock (write)");
     let mut leap_intersection = self.leap_intersection.write().expect("Failed to lock intersection");
     current.leaps += 1;

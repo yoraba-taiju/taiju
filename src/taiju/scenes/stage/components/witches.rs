@@ -1,6 +1,8 @@
+use crate::donut::Value;
+
 pub struct Witch {
-  pub health: u16,
-  pub spell: u16,
+  pub health: Value<u16>,
+  pub spell: Value<u16>,
 }
 
 pub struct Sora {
