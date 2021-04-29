@@ -78,16 +78,27 @@ impl Clock {
     t.ticks += 1;
     t.ticks
   }
+  fn adjust_intersection(leap_intersection: &mut Vec<u32>, leap_ticks: u32) {
+    for branch in leap_intersection.iter_mut() {
+      if leap_ticks < *branch {
+        *branch = leap_ticks;
+      }
+    }
+  }
   pub(crate) fn leap(&self, ticks: u32) -> SubjectiveTime {
     let mut current = self.current.write().expect("Failed to lock Clock (write)");
     let mut leap_intersection = self.leap_intersection.write().expect("Failed to lock intersection");
-    current.leaps += 1;
-    current.ticks = ticks;
-    for old_branch in leap_intersection.iter_mut() {
-      if ticks < *old_branch {
-        *old_branch = ticks;
+    if let Some(last_ticks) = leap_intersection.last() {
+      // optimize.
+      if ticks <= *last_ticks {
+        current.ticks = ticks;
+        Self::adjust_intersection(&mut leap_intersection, ticks);
+        return current.clone();
       }
     }
+    current.leaps += 1;
+    current.ticks = ticks;
+    Self::adjust_intersection(&mut leap_intersection, ticks);
     leap_intersection.push(ticks);
     current.clone()
   }
@@ -310,6 +321,8 @@ mod test {
     assert_eq!(22, *value);
     clock.leap(1); // tick = 1
     assert_eq!(1, *value);
+    clock.leap(0); // tick = 1
+    assert_eq!(0, *value);
   }
   #[test]
   fn value_test_with_single() {
