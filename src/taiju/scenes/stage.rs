@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use crate::donut::ClockRef;
 
 pub mod components;
+pub mod lifecycle;
 pub mod systems;
 
 pub struct StageScene {

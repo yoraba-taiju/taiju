@@ -5,10 +5,10 @@ use std::fmt::{Debug, Formatter};
 use typenum::{UInt, UTerm};
 use typenum::bit::{B0, B1};
 
-const RECORD_FRAMES: usize = 1800;
-
+const RECORD_FRAMES: usize = 900;
 //0b11100001000
-type U1800 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>, B0>;
+//type RecordFramesTNum = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>, B0>;
+type RecordFramesTNum = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>;
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Debug, Clone, Copy)]
 pub struct SubjectiveTime {
@@ -137,7 +137,7 @@ impl <T: Debug> Debug for ValueEntry<T> {
 }
 pub struct Value<T: Clone> {
   clock: Weak<Clock>,
-  history: heapless::Vec<ValueEntry<T>, U1800>,
+  history: heapless::Vec<ValueEntry<T>, RecordFramesTNum>,
 }
 
 impl <T: Debug + Clone> Debug for Value<T> {
