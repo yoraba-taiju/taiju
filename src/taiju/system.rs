@@ -14,7 +14,7 @@ pub struct UserInput {
   pub clock_direction: i8,
 }
 
-pub fn input_events(
+pub fn handle_input_events(
   mut input: ResMut<UserInput>,
   keyboard_input: Res<Input<KeyCode>>,
   mut gamepad_event: EventReader<GamepadEvent>)
