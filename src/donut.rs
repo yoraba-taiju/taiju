@@ -5,7 +5,7 @@ use std::fmt::{Debug, Formatter};
 use typenum::{UInt, UTerm};
 use typenum::bit::{B0, B1};
 
-const RECORD_FRAMES: usize = 900;
+pub const RECORDED_FRAMES: usize = 900;
 //0b11100001000
 //type RecordFramesTNum = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>, B0>;
 type RecordFramesTNum = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>;
@@ -253,7 +253,7 @@ impl <T: Clone> DerefMut for Value<T> {
 
 #[cfg(test)]
 mod test {
-  use crate::donut::{Clock, Value, SubjectiveTime, RECORD_FRAMES};
+  use crate::donut::{Clock, Value, SubjectiveTime, RECORDED_FRAMES};
 
   #[test]
   fn clock_tick() {
@@ -292,7 +292,7 @@ mod test {
     let clock = Clock::new();
     let  mut value = Value::<u32>::new(&clock, 0);
     assert_eq!(1, value.len());
-    assert_eq!(RECORD_FRAMES, value.capacity());
+    assert_eq!(RECORDED_FRAMES, value.capacity());
     *value = 1;
     assert_eq!(1, value.len());
     clock.tick();

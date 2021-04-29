@@ -1,8 +1,7 @@
 use bevy::prelude::*;
-use crate::donut::ClockRef;
 
+use crate::donut::ClockRef;
 pub mod components;
-pub mod lifecycle;
 pub mod systems;
 
 pub struct StageScene {
@@ -21,10 +20,11 @@ pub fn setup(
   mut materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
 ) {
+  {
+    use crate::scenes::stage::systems::scenario::ScenarioDirector;
+    commands.insert_resource(ScenarioDirector::load(asset_server));
+  }
   use components::*;
-  // cameras
-  commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-  commands.spawn_bundle(UiCameraBundle::default());
   // witches
   commands.spawn()
     .insert_bundle(SpriteBundle {
@@ -45,4 +45,8 @@ pub fn setup(
       w: clock.value(0.0),
       h: clock.value(0.0),
     });
+
+  // cameras
+  commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+  commands.spawn_bundle(UiCameraBundle::default());
 }
