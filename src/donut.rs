@@ -89,7 +89,7 @@ impl Clock {
     let mut current = self.current.write().expect("Failed to lock Clock (write)");
     let mut leap_intersection = self.leap_intersection.write().expect("Failed to lock intersection");
     if let Some(last_ticks) = leap_intersection.last() {
-      // optimize.
+      // optimized path.
       if ticks <= *last_ticks {
         current.ticks = ticks;
         Self::adjust_intersection(&mut leap_intersection, ticks);
