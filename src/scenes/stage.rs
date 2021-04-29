@@ -41,12 +41,8 @@ pub fn setup(
       health: clock.value(100),
       spell: clock.value(100),
     })
-    .insert(Position {
-      x: clock.value(0.0),
-      y: clock.value(0.0),
-      w: clock.value(0.0),
-      h: clock.value(0.0),
-    });
+    .insert(Position::new(&clock, -100.0, 0.0, 10.0, 10.0))
+  ;
 
   // cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());

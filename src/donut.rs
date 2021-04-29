@@ -4,11 +4,12 @@ use std::cmp::min;
 use std::fmt::{Debug, Formatter};
 use typenum::{UInt, UTerm};
 use typenum::bit::{B0, B1};
+use heapless::consts::U300;
 
-pub const RECORDED_FRAMES: usize = 900;
+pub const RECORDED_FRAMES: usize = 300;
 //0b11100001000
 //type RecordFramesTNum = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>, B0>;
-type RecordFramesTNum = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>;
+type RecordFramesTNum = U300;
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Debug, Clone, Copy)]
 pub struct SubjectiveTime {
@@ -164,11 +165,12 @@ impl <T: Clone> Value<T> {
     s
   }
   pub(crate) fn find_write_index(&self, subjective_time: SubjectiveTime) -> usize {
-    let mut beg: usize;
-    let mut end: usize;
     let ticks = subjective_time.ticks;
-    beg = 0;
-    end = self.history.len();
+    let mut beg: usize = 0;
+    let mut end: usize = self.history.len();
+    if self.history[end-1].time <= subjective_time {
+      return end;
+    }
     while beg < end {
       let mid = beg + (end - beg)/2;
       let mid_t = self.history[mid].time.ticks;
@@ -183,6 +185,9 @@ impl <T: Clone> Value<T> {
   pub(crate) fn find_read_index(&self, adjusted_time: u32) -> Option<usize> {
     let mut beg: usize = 0;
     let mut end: usize = self.history.len();
+    if self.history[end-1].time.ticks <= adjusted_time {
+      return Some(end-1);
+    }
     while beg < end {
       let mid = beg + (end - beg)/2;
       let mid_t = self.history[mid].time.ticks;
@@ -228,8 +233,9 @@ impl <T: Clone> DerefMut for Value<T> {
     let time = clock.current_time();
     let idx = self.find_write_index(time);
     if idx == self.history.capacity() {
+      let latest_value = self.history[idx - 1].value.clone();
       self.history.pop();
-      self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone())).ok().expect("FIXME");
+      self.history.push(ValueEntry::new(time, latest_value)).ok().expect("FIXME");
       &mut (self.history[idx - 1].value)
     }else if idx == self.history.len() {
       self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone())).ok().expect("FIXME");
