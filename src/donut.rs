@@ -1,11 +1,14 @@
 use std::sync::{Arc, Weak, RwLock};
 use std::ops::{Deref, DerefMut};
-use std::sync::atomic::Ordering;
-use bevy::utils::tracing::Instrument;
 use std::cmp::min;
 use std::fmt::{Debug, Formatter};
+use typenum::{UInt, UTerm};
+use typenum::bit::{B0, B1};
 
-const RECORD_FRAMES: usize = 600;
+const RECORD_FRAMES: usize = 1800;
+
+//0b11100001000
+type U1800 = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>, B0>;
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Debug, Clone, Copy)]
 pub struct SubjectiveTime {
@@ -105,9 +108,17 @@ impl <T> ValueEntry<T> {
   }
 }
 
+impl <T: Debug> Debug for ValueEntry<T> {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    f.debug_struct("ValueEntry")
+      .field("time", &self.time)
+      .field("value", &self.value)
+      .finish()
+  }
+}
 pub struct Value<T: Clone> {
   clock: Weak<Clock>,
-  history: heapless::Vec<ValueEntry<T>, heapless::consts::U600>,
+  history: heapless::Vec<ValueEntry<T>, U1800>,
 }
 
 impl <T: Debug + Clone> Debug for Value<T> {
@@ -130,7 +141,7 @@ impl <T: Clone> Value<T> {
       clock: Arc::downgrade(clock),
       history: heapless::Vec::new(),
     };
-    s.history.push(ValueEntry::new(clock.current_time(), initial));
+    s.history.push(ValueEntry::new(clock.current_time(), initial)).ok().expect("FIXME");
     s
   }
   pub(crate) fn find_write_index(&self, subjective_time: SubjectiveTime) -> usize {
@@ -168,6 +179,12 @@ impl <T: Clone> Value<T> {
       Some(beg - 1)
     }
   }
+  pub(crate) fn capacity(&self) -> usize {
+    self.history.capacity()
+  }
+  pub(crate) fn len(&self) -> usize {
+    self.history.len()
+  }
 }
 
 impl <T: Clone> Deref for Value<T> {
@@ -191,10 +208,10 @@ impl <T: Clone> DerefMut for Value<T> {
     let idx = self.find_write_index(time);
     if idx == self.history.capacity() {
       self.history.pop();
-      self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone()));
+      self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone())).ok().expect("FIXME");
       &mut (self.history[idx - 1].value)
     }else if idx == self.history.len() {
-      self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone()));
+      self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone())).ok().expect("FIXME");
       &mut (self.history[idx].value)
     }else{
       if idx + 1 < self.history.len() {
@@ -215,7 +232,7 @@ impl <T: Clone> DerefMut for Value<T> {
 
 #[cfg(test)]
 mod test {
-  use crate::donut::{Clock, Value, SubjectiveTime};
+  use crate::donut::{Clock, Value, SubjectiveTime, RECORD_FRAMES};
 
   #[test]
   fn clock_tick() {
@@ -224,6 +241,7 @@ mod test {
     clock.tick();
     assert_eq!(SubjectiveTime::new(0, 1), clock.current_time());
   }
+
   #[test]
   fn leap_test() {
     let clock = Clock::new();
@@ -245,6 +263,12 @@ mod test {
     assert_eq!(100, *value);
     clock.leap(1);
     assert_eq!(100, *value);
+  }
+  #[test]
+  fn check_capacity() {
+    let clock = Clock::new();
+    let value = Value::<u32>::new(&clock, 0);
+    assert_eq!(RECORD_FRAMES, value.capacity());
   }
   #[test]
   fn value_test_with_leap() {
