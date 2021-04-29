@@ -4,10 +4,9 @@ use system::UserInput;
 
 use crate::donut::{Clock, ClockRef};
 
-mod taiju;
-pub mod donut;
-pub mod scenes;
-pub mod system;
+mod donut;
+mod system;
+mod scenes;
 
 fn main() {
   App::build()
