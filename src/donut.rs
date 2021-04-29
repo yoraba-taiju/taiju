@@ -1,6 +1,6 @@
 use std::sync::{Arc, Weak, RwLock};
 use std::ops::{Deref, DerefMut};
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::Ordering;
 use bevy::utils::tracing::Instrument;
 
 const RECORD_FRAMES: usize = 600;
@@ -34,29 +34,43 @@ impl Clock {
     })
   }
   fn subjective_time(&self) -> SubjectiveTime {
-    let t = self.current.read().expect("Failed to lock Clock");
+    let t = self.current.read().expect("Failed to lock Clock (read)");
     t.deref().clone()
   }
   fn objective_time(&self) -> u32 {
-    let t = self.current.read().expect("Failed to lock Clock");
+    let t = self.current.read().expect("Failed to lock Clock (read)");
     t.ticks
   }
   fn tick(&self) -> u32 {
-    let mut t = self.current.write().expect("Failed to lock Clock");
+    let mut t = self.current.write().expect("Failed to lock Clock (write)");
     t.ticks += 1;
     t.ticks
   }
   fn leap(&self, ticks: u32) -> SubjectiveTime {
-    let mut t = self.current.write().expect("Failed to lock Clock");
-    t.ticks = ticks;
+    let mut t = self.current.write().expect("Failed to lock Clock (write)");
     t.leaps += 1;
+    t.ticks = ticks;
     t.clone()
+  }
+}
+
+struct ValueEntry<T> {
+  time: SubjectiveTime,
+  value: T,
+}
+
+impl <T> ValueEntry<T> {
+  fn new(time: SubjectiveTime, value: T) -> Self {
+    Self {
+      time,
+      value,
+    }
   }
 }
 
 pub struct Value<T> {
   clock: Weak<Clock>,
-  history: Vec<(SubjectiveTime, T)>,
+  history: Vec<ValueEntry<T>>,
   begin: usize,
   end: usize,
 }
@@ -65,14 +79,15 @@ impl <T> Value<T> {
   fn new(clock: &Arc<Clock>, initial: T) -> Self {
     Self {
       clock: Arc::downgrade(clock),
-      history: vec![(clock.subjective_time(), initial)],
+      history: vec![ValueEntry::new(clock.subjective_time(), initial)],
       begin: 0,
       end: 1,
     }
   }
-  pub(crate) fn find_write_index(&self, time: SubjectiveTime) -> usize {
+  pub(crate) fn find_write_index(&self, subjective_time: SubjectiveTime) -> usize {
     let mut beg: usize;
     let mut end: usize;
+    let ticks = subjective_time.ticks;
     if self.begin < self.end {
       beg = self.begin;
       end = self.end;
@@ -82,8 +97,8 @@ impl <T> Value<T> {
     }
     while beg < end {
       let mid = beg + (end - beg)/2;
-      let t = self.history[mid % RECORD_FRAMES].0;
-      if t < time {
+      let t = self.history[mid % RECORD_FRAMES].time.ticks;
+      if t < ticks {
         beg = mid + 1;
       } else {
         end = mid - 1;
@@ -98,7 +113,7 @@ impl <T> Deref for Value<T> {
 
   fn deref(&self) -> &Self::Target {
     let clock = self.clock.upgrade().unwrap();
-    &self.history[0].1
+    &self.history[0].value
   }
 }
 
