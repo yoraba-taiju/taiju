@@ -1,188 +1,140 @@
+use std::sync::{Arc, Weak, RwLock};
 use std::ops::{Deref, DerefMut};
-use bevy::utils::HashMap;
-use std::any::{TypeId, Any};
-use arr_macro::arr;
-use std::mem::swap;
-use std::marker::PhantomData;
+use std::sync::atomic::{AtomicU64, Ordering};
+use bevy::utils::tracing::Instrument;
 
 const RECORD_FRAMES: usize = 600;
 
-struct Ticket<T:'static> {
-  storage_index: usize,
-  value_index: usize,
-  _phantom_data: PhantomData<T>,
+#[derive(Ord, PartialOrd, Eq, PartialEq, Debug, Clone, Copy)]
+pub struct SubjectiveTime {
+  leaps: u32,
+  ticks: u32,
 }
 
-impl Ticket<T> {
-  fn new(storage_index: usize, value_index: usize) -> Self {
+impl SubjectiveTime {
+  fn new(leaps:u32, ticks:u32) -> Self {
     Self {
-      storage_index,
-      value_index,
-      _phantom_data: Default::default(),
+      leaps,
+      ticks,
     }
   }
 }
 
-#[derive(Default)]
-struct ValueStorage<T> {
-  values: Vec<T>,
+pub struct Clock {
+  current: RwLock<SubjectiveTime>,
 }
 
-#[derive(Default)]
-struct Snapshot {
-  time: f32,
-  storages: Vec<Box<dyn Any>>,
+impl Clock {
+  fn new() -> Arc<Self> {
+    Arc::new(Self {
+      current: RwLock::new(SubjectiveTime{
+        leaps: 0,
+        ticks: 0,
+      }),
+    })
+  }
+  fn subjective_time(&self) -> SubjectiveTime {
+    let t = self.current.read().expect("Failed to lock Clock");
+    t.deref().clone()
+  }
+  fn objective_time(&self) -> u32 {
+    let t = self.current.read().expect("Failed to lock Clock");
+    t.ticks
+  }
+  fn tick(&self) -> u32 {
+    let mut t = self.current.write().expect("Failed to lock Clock");
+    t.ticks += 1;
+    t.ticks
+  }
+  fn leap(&self, ticks: u32) -> SubjectiveTime {
+    let mut t = self.current.write().expect("Failed to lock Clock");
+    t.ticks = ticks;
+    t.leaps += 1;
+    t.clone()
+  }
 }
 
-impl Snapshot {
-  fn new(time: f32) -> Self {
+pub struct Value<T> {
+  clock: Weak<Clock>,
+  history: Vec<(SubjectiveTime, T)>,
+  begin: usize,
+  end: usize,
+}
+
+impl <T> Value<T> {
+  fn new(clock: &Arc<Clock>, initial: T) -> Self {
     Self {
-      time,
-      storages: Default::default(),
+      clock: Arc::downgrade(clock),
+      history: vec![(clock.subjective_time(), initial)],
+      begin: 0,
+      end: 1,
     }
   }
-
-  pub(crate) fn put<T:'static>(&mut self, storage_index: usize, value: T) -> usize {
-    let storage = self.storage_mut(storage_index);
-
-  }
-
-  fn storage<T:'static>(&self, idx: usize) -> &Box<ValueStorage<T>> {
-    let storage = &self.storages[idx];
-    storage.downcast_ref::<Box<ValueStorage<T>>>().expect("Assertion error")
-  }
-  fn storage_mut<T:'static>(&mut self, idx: usize) -> &mut Box<ValueStorage<T>> {
-    let storage = &mut self.storages[idx];
-    storage.downcast_mut::<Box<ValueStorage<T>>>().expect("Assertion error")
-  }
-}
-
-pub struct Store {
-  current_frame: usize,
-  type_indexes: HashMap<TypeId, usize>,
-  snapshots: Vec<Snapshot>,
-}
-
-impl Store {
-  pub fn new() -> Self {
-    Store {
-      current_frame: 0,
-      type_indexes: Default::default(),
-      snapshots: (0..RECORD_FRAMES).map(|_n| Snapshot::default()).collect(),
-    }
-  }
-  fn storage_index_of<T:'static>(&self) -> Option<usize> {
-    let type_id = TypeId::of::<T>();
-    self.type_indexes.get(&type_id).map(|n| *n)
-  }
-  fn snapshot_index(&self) -> usize {
-    self.current_frame % RECORD_FRAMES
-  }
-  pub fn tick(&mut self, time: f32) {
-    self.current_frame += 1;
-    let idx = self.snapshot_index();
-    self.snapshots[idx] = Snapshot::new(time);
-  }
-  pub fn leap(&mut self, frame: usize) -> Result<(), &'static str> {
-    if self.current_frame <= frame + RECORD_FRAMES && frame <= self.current_frame {
-      self.current_frame = frame;
-      Ok(())
+  pub(crate) fn find_write_index(&self, time: SubjectiveTime) -> usize {
+    let mut beg: usize;
+    let mut end: usize;
+    if self.begin < self.end {
+      beg = self.begin;
+      end = self.end;
     } else {
-      Err("Invalid range")
+      beg = self.begin;
+      end = self.end + RECORD_FRAMES;
     }
-  }
-  pub fn current_frame(&self) -> usize {
-    self.current_frame
-  }
-
-  pub fn put<T:'static>(&mut self, value: T) -> Ticket<T> {
-    let snapshot = &mut self.snapshots[self.snapshot_index()];
-    if Some(idx) = self.storage_index_of::<T>() {
-      snapshot.
-    } else {
-
-    }
-  }
-  pub fn get<T:'static>(&self, ticket: &Ticket<T>) -> &T {
-
-  }
-  pub fn get_mut<T:'static>(&mut self, ticket: &Ticket<T>) -> &mut T {
-
-  }
-}
-
-#[derive(Clone)]
-pub struct Value<'a, V>
-  where V: Default + Copy
-{
-  clock: &'a Store,
-  values: [V; RECORD_FRAMES],
-  begin_frame: usize,
-  last_frame: usize,
-}
-
-impl <'a, V> Value<'a, V>
-  where V:Default + Copy
-{
-  fn new(clock: &'a Store) -> Self {
-    Self {
-      clock,
-      values: [V::default(); RECORD_FRAMES],
-      begin_frame: clock.current_frame,
-      last_frame: clock.current_frame,
-    }
-  }
-  fn index(&self) -> Option<usize> {
-    let index = self.clock.current_frame - self.begin_frame;
-    let last_index = self.last_frame - self.begin_frame;
-    if (last_index as isize - index as isize).abs() > RECORD_FRAMES as isize {
-      None
-    } else {
-      if index < last_index {
-        Some(index % RECORD_FRAMES)
+    while beg < end {
+      let mid = beg + (end - beg)/2;
+      let t = self.history[mid % RECORD_FRAMES].0;
+      if t < time {
+        beg = mid + 1;
       } else {
-        Some(last_index % RECORD_FRAMES)
+        end = mid - 1;
       }
     }
+    return end;
   }
-  pub fn value(&self) -> Option<&V> {
-    self.index().map(|idx| &self.values[idx])
+}
+
+impl <T> Deref for Value<T> {
+  type Target = T;
+
+  fn deref(&self) -> &Self::Target {
+    let clock = self.clock.upgrade().unwrap();
+    &self.history[0].1
   }
-  fn value_mut(&mut self) -> Option<&mut V> {
-    if let Some(idx) = self.index() {
-      Some(&mut self.values[idx])
-    } else {
-      None
-    }
+}
+
+impl <T> DerefMut for Value<T> {
+  fn deref_mut(&mut self) -> &mut Self::Target {
+    todo!()
   }
 }
 
 #[cfg(test)]
 mod test {
-  use crate::donut::{Store, Value};
+  use crate::donut::{Clock, Value, SubjectiveTime};
 
   #[test]
   fn clock_tick() {
-    let mut clock = Store::new();
-    assert_eq!(0, clock.current_frame());
-    clock.tick(0.1);
-    assert_eq!(1, clock.current_frame());
+    let mut clock = Clock::new();
+    assert_eq!(SubjectiveTime::new(0, 0), clock.subjective_time());
+    clock.tick();
+    assert_eq!(SubjectiveTime::new(0, 1), clock.subjective_time());
   }
   #[test]
   fn leap_test() {
-    let mut clock = Store::new();
-    clock.tick(0.1);
-    clock.tick(0.2);
+    let mut clock = Clock::new();
+    clock.tick();
+    clock.tick();
     clock.leap(1);
-    assert_eq!(1, clock.current_frame());
+    assert_eq!(SubjectiveTime::new(1, 1), clock.subjective_time());
   }
 
   #[test]
   fn simple_value_test() {
-    let mut clock = Store::new();
-    //let mut value = Value::<u32>::new(&clock);
-    clock.tick(0.1);
-    clock.tick(0.2);
+    let mut clock = Clock::new();
+    let mut value = Value::<u32>::new(&clock, 0);
+    clock.tick();
+    clock.tick();
+    assert_eq!(1, value.find_write_index(clock.subjective_time()));
     clock.leap(1);
     //assert_eq!(Some(&0u32), value.value());
   }
