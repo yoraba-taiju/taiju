@@ -2,8 +2,8 @@ use std::sync::{Arc, Weak, RwLock};
 use std::ops::{Deref, DerefMut};
 use std::cmp::min;
 use std::fmt::{Debug, Formatter};
-use typenum::{UInt, UTerm};
-use typenum::bit::{B0, B1};
+//use typenum::{UInt, UTerm};
+//use typenum::bit::{B0, B1};
 use heapless::consts::U300;
 
 pub const RECORDED_FRAMES: usize = 300;
