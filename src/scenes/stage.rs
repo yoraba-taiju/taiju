@@ -22,11 +22,7 @@ pub fn setup(
   mut materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
 ) {
-  {
-    use crate::scenes::stage::resources::scenario::ScenarioDirector;
-    commands.insert_resource(ScenarioDirector::load(asset_server));
-  }
-  use components::*;
+  commands.insert_resource(ScenarioDirector::load(asset_server));
   // witches
   commands.spawn()
     .insert_bundle(SpriteBundle {

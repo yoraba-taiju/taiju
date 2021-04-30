@@ -1,11 +1,10 @@
 use bevy::{
   input::{
     gamepad::{GamepadEvent, GamepadEventType},
-    keyboard::KeyboardInput,
   },
   prelude::*,
 };
-use crate::donut::ClockRef;
+use crate::scenes::stage::prelude::*;
 
 #[derive(Default)]
 pub struct UserInput {
