@@ -25,7 +25,6 @@ impl SubjectiveTime {
     }
   }
 }
-
 pub type ClockRef = Arc<Clock>;
 pub struct Clock {
   current: RwLock<SubjectiveTime>,
@@ -136,6 +135,7 @@ impl <T: Debug> Debug for ValueEntry<T> {
       .finish()
   }
 }
+
 pub struct Value<T: Clone> {
   clock: Weak<Clock>,
   history: heapless::Vec<ValueEntry<T>, RecordFramesTNum>,

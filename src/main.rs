@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_kira_audio::AudioPlugin;
 
 mod donut;
 mod system;
@@ -15,6 +16,7 @@ fn main() {
       ..Default::default()
     })
     .add_plugins(DefaultPlugins)
+    .add_plugin(AudioPlugin)
     .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.9)));
   {
     use crate::scenes::stage::prelude::*;
