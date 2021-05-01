@@ -237,10 +237,10 @@ impl <T: Clone> DerefMut for Value<T> {
       self.history.pop();
       self.history.push(ValueEntry::new(time, latest_value)).ok().expect("FIXME");
       &mut (self.history[idx - 1].value)
-    }else if idx == self.history.len() {
+    } else if idx == self.history.len() {
       self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone())).ok().expect("FIXME");
       &mut (self.history[idx].value)
-    }else{
+    } else {
       if idx + 1 < self.history.len() {
         self.history.truncate(idx + 1);
       }
