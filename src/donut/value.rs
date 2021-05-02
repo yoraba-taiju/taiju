@@ -50,8 +50,9 @@ impl <T: Clone> Value<T> {
   pub(crate) fn new(clock: &Arc<Clock>, initial: T) -> Self {
     let mut s = Self {
       clock: Arc::downgrade(clock),
-      history: VecDeque::with_capacity(RECORDED_FRAMES),
+      history: VecDeque::new(),
     };
+    s.history.reserve_exact(RECORDED_FRAMES);
     s.history.push_back(ValueEntry::new(clock.current_time(), initial));
     s
   }
@@ -129,7 +130,7 @@ impl <T: Clone> DerefMut for Value<T> {
     let clock = self.clock.upgrade().expect("Clock was missing.");
     let current_time = clock.current_time();
     let idx = self.find_write_index(current_time);
-    if idx == self.history.capacity() {
+    if idx == RECORDED_FRAMES {
       let latest_value = self.history[idx - 1].value.clone();
       self.history.pop_front();
       self.history.push_back(ValueEntry::new(current_time, latest_value));
@@ -147,11 +148,14 @@ impl <T: Clone> DerefMut for Value<T> {
           panic!("Do not refer non-existent value!")
         }
       } else {
-        let prev_value = self.history[idx - 1].value.clone();
-        self.history[idx - 1].value = prev_value;
+        let prev_time = self.history[idx - 1].time.clone();
+        if prev_time.ticks != current_time.ticks {
+          let prev_value = self.history[idx - 1].value.clone();
+          self.history[idx].value = prev_value;
+        }
       }
-      self.history[idx - 1].time = current_time;
-      &mut (self.history[idx - 1].value)
+      self.history[idx].time = current_time;
+      &mut (self.history[idx].value)
     }
   }
 }

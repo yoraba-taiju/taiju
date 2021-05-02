@@ -51,7 +51,7 @@ mod test {
     let clock = Clock::new();
     let  mut value = Value::<u32>::new(&clock, 0);
     assert_eq!(1, value.len());
-    assert_eq!(RECORDED_FRAMES, value.capacity());
+    assert!(RECORDED_FRAMES <= value.capacity());
     *value = 1;
     assert_eq!(1, value.len());
     clock.tick();
@@ -100,13 +100,12 @@ mod test {
     let clock = Clock::new();
     let mut value = Value::<u32>::new(&clock, 0);
     for i in 0..1000 {
-      clock.tick();
       *value = i;
+      clock.tick();
     }
-    for i in 999..=0 {
+    for i in (700..1000).rev() {
       clock.leap(i);
-      *value += 1;
-      assert_eq!(i+1, *value);
+      assert_eq!(i, *value);
     }
   }
   #[test]

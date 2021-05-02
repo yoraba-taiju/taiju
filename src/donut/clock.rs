@@ -20,11 +20,12 @@ impl Debug for Clock {
         .join(", ");
       format!("[{}]", inner)
     };
-
-    f.debug_struct("Clock")
-      .field("current", &format!("({}, {})", current.leaps, current.ticks))
-      .field("intersections", &leap_intersections_str)
-      .finish()
+    let current_str = format!("({}, {})", current.leaps, current.ticks);
+    f.write_str(
+      format!("Clock {{ current: {}, intersections: {} }}",
+              current_str,
+              leap_intersections_str
+      ).as_str())
   }
 }
 
