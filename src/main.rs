@@ -31,7 +31,7 @@ fn main() {
       .add_system(progress_scenario.system())
       .add_system(move_by_motion.system())
       .add_system(move_sora.system())
-      .add_system_to_stage(CoreStage::PostUpdate, handle_vanished_entities.system())
+      .add_system_to_stage(CoreStage::PostUpdate, handle_entity_vanishes.system())
       .add_system_to_stage(CoreStage::PostUpdate, copy_to_transform.system())
     ;
   }

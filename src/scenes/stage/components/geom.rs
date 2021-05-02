@@ -50,7 +50,7 @@ pub fn copy_to_transform(mut query: Query<(&Position, &mut Transform)>) {
   }
 }
 
-pub fn handle_vanished_entities(
+pub fn handle_entity_vanishes(
   mut commands: Commands,
   clock: Res<ClockRef>,
   mut query: Query<(Entity, &Position), Without<Vanished>>
