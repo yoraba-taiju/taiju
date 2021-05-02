@@ -12,5 +12,7 @@ pub use super::{
     scenario::*,
     clock::*,
     user_input::*,
-  }
+  },
+  StagePlugin,
+  StageScene,
 };

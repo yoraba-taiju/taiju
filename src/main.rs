@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use bevy_kira_audio::AudioPlugin;
 
 mod donut;
 mod system;
@@ -16,12 +15,12 @@ fn main() {
       ..Default::default()
     })
     .add_plugins(DefaultPlugins)
-    .add_plugin(AudioPlugin)
     .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.9)));
   {
     use crate::scenes::stage::prelude::*;
     use crate::donut::Clock;
     builder
+      .add_plugin(StagePlugin)
       .insert_resource(Clock::new())
       .insert_resource(UserInput::default())
       .add_startup_system(scenes::stage::setup.system())

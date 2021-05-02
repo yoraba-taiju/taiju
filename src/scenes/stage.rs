@@ -1,10 +1,21 @@
 use bevy::prelude::*;
+use crate::scenes::stage::prelude::*;
 
 pub mod components;
 pub mod resources;
 pub mod prelude;
 
-use prelude::*;
+#[derive(Default)]
+pub struct StagePlugin;
+
+impl Plugin for StagePlugin {
+  fn build(&self, app: &mut AppBuilder) {
+    use crate::scenes::stage::scenario::*;
+    app
+      .init_asset_loader::<ScenarioLoader>()
+      .add_asset::<Scenario>();
+  }
+}
 
 pub struct StageScene {
 }

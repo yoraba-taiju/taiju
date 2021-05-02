@@ -1,5 +1,11 @@
 use crate::scenes::stage::prelude::*;
+use bevy::reflect::TypeUuid;
+
+pub mod loader;
+pub use loader::ScenarioLoader;
+
 use std::f32::consts::PI;
+use bevy::asset::Asset;
 
 enum EventType {
 
@@ -9,13 +15,29 @@ struct Event {
 
 }
 
-pub struct ScenarioDirector {
+#[derive(Debug, Clone, TypeUuid)]
+#[uuid = "779ba602-ab1a-11eb-bcbc-0242ac130002"]
+pub struct Scenario {
 
+}
+
+impl Scenario {
+  pub(crate) fn try_from_bytes(bytes: &[u8]) -> Result<Scenario, std::io::Error> {
+    Ok(Scenario{})
+  }
+}
+
+//
+
+pub struct ScenarioDirector {
+  handle: Handle<Scenario>,
 }
 
 impl ScenarioDirector {
   pub fn load(asset_server: Res<AssetServer>) -> Self {
+    let scenario = asset_server.load::<Scenario, _>("scenario/stage01.json");
     Self{
+      handle: scenario,
     }
   }
 }
@@ -27,7 +49,10 @@ pub fn progress_scenario(
   clock: Res<ClockRef>,
   user_input: Res<UserInput>,
   mut director: ResMut<ScenarioDirector>,
+  assets: Res<Assets<Scenario>>,
 ) {
+  //let scenario = assets.get(&director.handle).unwrap();
+
   if user_input.clock_direction <= 0 {
     return;
   }
