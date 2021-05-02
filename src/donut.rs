@@ -38,16 +38,15 @@ impl Debug for Clock {
       let inner = self.leap_intersection.read().unwrap()
         .iter()
         .enumerate()
-        .map(|(i,t)| format!("(idx={}, time={})", i, t))
+        .map(|(i,t)| format!("(leap={}, at={})", i, t))
         .collect::<Vec<String>>()
         .join(", ");
       format!("[{}]", inner)
     };
 
     f.debug_struct("Clock")
-      .field("current leaps", &current.leaps)
-      .field("current ticks", &current.ticks)
-      .field("leap intersections", &leap_intersections_str)
+      .field("current", &format!("({}, {})", current.leaps, current.ticks))
+      .field("intersections", &leap_intersections_str)
       .finish()
   }
 }
@@ -67,11 +66,11 @@ impl Clock {
   }
   pub fn current_time(&self) -> SubjectiveTime {
     let t = self.current.read().expect("Failed to lock Clock (read)");
-    t.deref().clone()
+    t.clone()
   }
   pub fn current_tick(&self) -> u32 {
     let t = self.current.read().expect("Failed to lock Clock (read)");
-    t.deref().ticks
+    t.ticks
   }
   pub fn tick(&self) -> u32 {
     let mut t = self.current.write().expect("Failed to lock Clock (write)");
@@ -87,15 +86,10 @@ impl Clock {
   }
   pub(crate) fn leap(&self, ticks: u32) -> SubjectiveTime {
     let mut current = self.current.write().expect("Failed to lock Clock (write)");
-    let mut leap_intersection = self.leap_intersection.write().expect("Failed to lock intersection");
-    if let Some(last_ticks) = leap_intersection.last() {
-      // optimized path.
-      if ticks <= *last_ticks {
-        current.ticks = ticks;
-        Self::adjust_intersection(&mut leap_intersection, ticks);
-        return current.clone();
-      }
+    if ticks == current.ticks {
+      return current.clone();
     }
+    let mut leap_intersection = self.leap_intersection.write().expect("Failed to lock intersection");
     current.leaps += 1;
     current.ticks = ticks;
     Self::adjust_intersection(&mut leap_intersection, ticks);
@@ -146,7 +140,7 @@ impl <T: Debug + Clone> Debug for Value<T> {
     let history_str = {
       let inner = self.history
         .iter()
-        .map(|entry| format!("([{}, {}] = {:?})", &entry.time.leaps, &entry.time.ticks, &entry.value))
+        .map(|entry| format!("(({}, {}) = {:?})", &entry.time.leaps, &entry.time.ticks, &entry.value))
         .collect::<Vec<String>>()
         .join(", ");
       format!("[{}]", inner)
@@ -168,8 +162,13 @@ impl <T: Clone> Value<T> {
     let ticks = subjective_time.ticks;
     let mut beg: usize = 0;
     let mut end: usize = self.history.len();
-    if self.history[end-1].time <= subjective_time {
+    // Optimization path
+    let last_ticks = self.history[end-1].time.ticks;
+    if last_ticks < subjective_time.ticks {
       return end;
+    }
+    if last_ticks == subjective_time.ticks {
+      return end - 1;
     }
     while beg < end {
       let mid = beg + (end - beg)/2;
@@ -185,6 +184,7 @@ impl <T: Clone> Value<T> {
   pub(crate) fn find_read_index(&self, adjusted_time: u32) -> Option<usize> {
     let mut beg: usize = 0;
     let mut end: usize = self.history.len();
+    // Optimization path
     if self.history[end-1].time.ticks <= adjusted_time {
       return Some(end-1);
     }
@@ -230,29 +230,30 @@ impl <T: Clone> Deref for Value<T> {
 impl <T: Clone> DerefMut for Value<T> {
   fn deref_mut(&mut self) -> &mut Self::Target {
     let clock = self.clock.upgrade().expect("Clock was missing.");
-    let time = clock.current_time();
-    let idx = self.find_write_index(time);
+    let current_time = clock.current_time();
+    let idx = self.find_write_index(current_time);
     if idx == self.history.capacity() {
       let latest_value = self.history[idx - 1].value.clone();
       self.history.pop();
-      self.history.push(ValueEntry::new(time, latest_value)).ok().expect("FIXME");
+      self.history.push(ValueEntry::new(current_time, latest_value)).ok().expect("FIXME");
       &mut (self.history[idx - 1].value)
     } else if idx == self.history.len() {
-      self.history.push(ValueEntry::new(time, self.history[idx - 1].value.clone())).ok().expect("FIXME");
+      self.history.push(ValueEntry::new(current_time, self.history[idx - 1].value.clone())).ok().expect("FIXME");
       &mut (self.history[idx].value)
     } else {
       if idx + 1 < self.history.len() {
         self.history.truncate(idx + 1);
       }
-      let (current, pasts) = self.history.split_last_mut().unwrap();
-      if time.ticks < current.time.ticks {
-        panic!("Do not refer non-existent value!")
+      let (latest_value, past_values) = self.history.split_last_mut().unwrap();
+      if past_values.is_empty() {
+        if latest_value.time.ticks != current_time.ticks {
+          panic!("Do not refer non-existent value!")
+        }
+      } else {
+        latest_value.value = past_values[past_values.len()-1].value.clone();
       }
-      if current.time.ticks < time.ticks {
-        current.value = pasts[pasts.len()-1].value.clone();
-      }
-      current.time = time;
-      &mut (current.value)
+      latest_value.time = current_time;
+      &mut (latest_value.value)
     }
   }
 }
@@ -300,6 +301,7 @@ mod test {
     assert_eq!(1, value.len());
     assert_eq!(RECORDED_FRAMES, value.capacity());
     *value = 1;
+    println!("{:?}", &value);
     assert_eq!(1, value.len());
     clock.tick();
     assert_eq!(1, value.len());
@@ -327,6 +329,8 @@ mod test {
     assert_eq!(22, *value);
     clock.leap(1); // tick = 1
     assert_eq!(1, *value);
+    *value = 11;
+    assert_eq!(11, *value);
     clock.leap(0); // tick = 1
     assert_eq!(0, *value);
   }
