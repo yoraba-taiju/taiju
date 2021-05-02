@@ -41,7 +41,7 @@ pub fn move_by_motion(_clock: Res<ClockRef>, mut query: Query<(&mut Position, &M
   }
 }
 
-pub fn copy_to_transform(mut query: Query<(&Position, &mut Transform)>) {
+pub fn copy_to_transform(input: Res<UserInput>, mut query: Query<(&Position, &mut Transform)>) {
   for (pos, mut trans) in query.iter_mut() {
     let pos: &Position = &pos;
     let trans: &mut Transform = &mut trans;

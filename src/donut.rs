@@ -2,14 +2,10 @@ use std::sync::{Arc, Weak, RwLock};
 use std::ops::{Deref, DerefMut};
 use std::cmp::min;
 use std::fmt::{Debug, Formatter};
-//use typenum::{UInt, UTerm};
-//use typenum::bit::{B0, B1};
-use heapless::consts::U300;
+use std::collections::VecDeque;
+use bevy::utils::tracing::Instrument;
 
 pub const RECORDED_FRAMES: usize = 300;
-//0b11100001000
-//type RecordFramesTNum = UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UInt<UTerm, B1>, B1>, B1>, B0>, B0>, B0>, B0>, B1>, B0>, B0>, B0>;
-type RecordFramesTNum = U300;
 
 #[derive(Ord, PartialOrd, Eq, PartialEq, Debug, Clone, Copy)]
 pub struct SubjectiveTime {
@@ -132,7 +128,7 @@ impl <T: Debug> Debug for ValueEntry<T> {
 
 pub struct Value<T: Clone> {
   clock: Weak<Clock>,
-  history: heapless::Vec<ValueEntry<T>, RecordFramesTNum>,
+  history: VecDeque<ValueEntry<T>>,
 }
 
 impl <T: Debug + Clone> Debug for Value<T> {
@@ -153,9 +149,9 @@ impl <T: Clone> Value<T> {
   fn new(clock: &Arc<Clock>, initial: T) -> Self {
     let mut s = Self {
       clock: Arc::downgrade(clock),
-      history: heapless::Vec::new(),
+      history: VecDeque::with_capacity(RECORDED_FRAMES),
     };
-    s.history.push(ValueEntry::new(clock.current_time(), initial)).ok().expect("FIXME");
+    s.history.push_back(ValueEntry::new(clock.current_time(), initial));
     s
   }
   pub(crate) fn find_write_index(&self, subjective_time: SubjectiveTime) -> usize {
@@ -218,7 +214,7 @@ impl <T: Clone> Deref for Value<T> {
 
   fn deref(&self) -> &Self::Target {
     let clock = self.clock.upgrade().unwrap();
-    let time = clock.adjust_read_time(self.history.last().unwrap().time);
+    let time = clock.adjust_read_time(self.history[self.history.len() - 1].time);
     let idx = self.find_read_index(time).unwrap();
     if idx == self.history.len() {
       panic!("Do not refer non-existent value!")
@@ -234,26 +230,27 @@ impl <T: Clone> DerefMut for Value<T> {
     let idx = self.find_write_index(current_time);
     if idx == self.history.capacity() {
       let latest_value = self.history[idx - 1].value.clone();
-      self.history.pop();
-      self.history.push(ValueEntry::new(current_time, latest_value)).ok().expect("FIXME");
+      self.history.pop_front();
+      self.history.push_back(ValueEntry::new(current_time, latest_value));
       &mut (self.history[idx - 1].value)
     } else if idx == self.history.len() {
-      self.history.push(ValueEntry::new(current_time, self.history[idx - 1].value.clone())).ok().expect("FIXME");
+      self.history.push_back(ValueEntry::new(current_time, self.history[idx - 1].value.clone()));
       &mut (self.history[idx].value)
     } else {
       if idx + 1 < self.history.len() {
         self.history.truncate(idx + 1);
       }
-      let (latest_value, past_values) = self.history.split_last_mut().unwrap();
-      if past_values.is_empty() {
-        if latest_value.time.ticks != current_time.ticks {
+      if self.history.len() == 1 {
+        let latest_ticks = self.history.front().unwrap().time.ticks;
+        if latest_ticks != current_time.ticks {
           panic!("Do not refer non-existent value!")
         }
       } else {
-        latest_value.value = past_values[past_values.len()-1].value.clone();
+        let prev_value = self.history[idx - 1].value.clone();
+        self.history[idx - 1].value = prev_value;
       }
-      latest_value.time = current_time;
-      &mut (latest_value.value)
+      self.history[idx - 1].time = current_time;
+      &mut (self.history[idx - 1].value)
     }
   }
 }
@@ -342,6 +339,20 @@ mod test {
     clock.leap(0); // leap = 1, ticks = 0
     *value = 2;
     assert_eq!(2, *value);
+  }
+  #[test]
+  fn value_test_with_long() {
+    let clock = Clock::new();
+    let mut value = Value::<u32>::new(&clock, 0);
+    for i in 0..1000 {
+      clock.tick();
+      *value = i;
+    }
+    for i in 999..=0 {
+      clock.leap(i);
+      *value += 1;
+      assert_eq!(i+1, *value);
+    }
   }
   #[test]
   #[should_panic]
