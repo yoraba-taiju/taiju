@@ -301,7 +301,6 @@ mod test {
     assert_eq!(1, value.len());
     assert_eq!(RECORDED_FRAMES, value.capacity());
     *value = 1;
-    println!("{:?}", &value);
     assert_eq!(1, value.len());
     clock.tick();
     assert_eq!(1, value.len());
