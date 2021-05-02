@@ -50,21 +50,21 @@ pub fn copy_to_transform(mut query: Query<(&Position, &mut Transform)>) {
   }
 }
 
-pub fn handle_vanished_entities(clock: Res<ClockRef>, mut query: Query<(&Position, &mut Lifetime), Without<Witch>>) {
-  let now = clock.current_tick();
-  for (pos, mut lifetime) in query.iter_mut() {
+pub fn handle_vanished_entities(
+  mut commands: Commands,
+  clock: Res<ClockRef>,
+  mut query: Query<(Entity, &Position), Without<Vanished>>
+) {
+  for (entity, pos) in query.iter_mut() {
+    let entity: Entity = entity;
     let pos: &Position = &pos;
-    let lifetime: &mut Lifetime = &mut lifetime;
-    if lifetime.vanished_at.is_some() {
-      continue;
-    }
     let x = *pos.x;
     let y = *pos.y;
     if x < (-30.0-(1920.0/2.0)) ||
       (30.0+(1920.0/2.0)) < x ||
       y < (-30.0-(1080.0/2.0)) ||
       (30.0+(1080.0/2.0)) < y {
-      lifetime.vanished_at = Some(now);
+      commands.entity(entity).insert(Vanished::new(&clock));
     }
   }
 }

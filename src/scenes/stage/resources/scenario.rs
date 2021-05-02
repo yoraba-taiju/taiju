@@ -36,7 +36,7 @@ pub fn progress_scenario(
     for i in -5..=5 {
       let angle = ((i+18) as f32) * 2.0 * PI / 36.0;
       commands.spawn()
-        .insert(Lifetime::new(&clock))
+        .insert(Spawned::new(&clock))
         .insert(Bullet{})
         .insert(Position::new(&clock,400.0, 0.0, 10.0, 10.0))
         .insert(Motion::Constant(angle.cos() * 3.0, angle.sin() * 3.0))
@@ -57,7 +57,7 @@ pub fn progress_scenario(
     dir.0 /= sum;
     dir.1 /= sum;
     commands.spawn()
-      .insert(Lifetime::new(&clock))
+      .insert(Spawned::new(&clock))
       .insert(Bullet{})
       .insert(Position::new(&clock,400.0, 0.0, 10.0, 10.0))
       .insert(Motion::Constant(dir.0 * 10.0, dir.1 * 10.0))
