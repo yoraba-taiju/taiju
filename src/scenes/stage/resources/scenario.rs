@@ -75,12 +75,12 @@ impl ScenarioDirector {
     let scenario = self.scenario.as_ref().unwrap();
     let current = clock.current_tick();
     for i in self.read_events..scenario.events.len() {
-      let (at, ev) = &scenario.events[i];
-      if *at > current {
+      let (at, ev) = scenario.events[i].clone();
+      if at > current {
         break;
       }
       self.read_events+=1;
-      match ev.clone() {
+      match ev {
         Event::WitchSpeedChanged(x, y) => { *self.scene_speed = (x,y); }
       }
     }
@@ -112,5 +112,4 @@ pub fn progress_scenario(
   }
   let sora: (Entity, &Position) = sora_query.single().unwrap();
   director.handle(&clock, &mut commands, asset_server, &sora);
-
 }
