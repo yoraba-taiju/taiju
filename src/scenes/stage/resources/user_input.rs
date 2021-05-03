@@ -20,8 +20,6 @@ pub fn handle_input_events(
   keyboard_input: Res<Input<KeyCode>>,
   mut gamepad_event: EventReader<GamepadEvent>,
 ) {
-  let mut x: f32 = 0.0;
-  let mut y: f32 = 0.0;
   for event in gamepad_event.iter() {
     match &event {
       GamepadEvent(gamepad, GamepadEventType::Connected) => {
@@ -47,22 +45,24 @@ pub fn handle_input_events(
       }
     }
   }
+  let mut keyboard_x: f32 = 0.0;
+  let mut keyboard_y: f32 = 0.0;
   if keyboard_input.pressed(KeyCode::Up) {
-    y += 1.0;
+    keyboard_y += 1.0;
   }
   if keyboard_input.pressed(KeyCode::Down) {
-    y -= 1.0;
+    keyboard_y -= 1.0;
   }
   if keyboard_input.pressed(KeyCode::Left) {
-    x += -1.0;
+    keyboard_x += -1.0;
   }
   if keyboard_input.pressed(KeyCode::Right) {
-    x += 1.0;
+    keyboard_x += 1.0;
   }
   input.clock_direction = 1;
   if keyboard_input.pressed(KeyCode::X) {
     input.clock_direction = -1;
   }
-  input.x = input.pad_x.clone() + x;
-  input.y = input.pad_y.clone() + y;
+  input.x = input.pad_x.clone() + keyboard_x;
+  input.y = input.pad_y.clone() + keyboard_y;
 }
