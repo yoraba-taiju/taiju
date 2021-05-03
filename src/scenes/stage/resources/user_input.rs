@@ -8,6 +8,8 @@ use crate::scenes::stage::prelude::*;
 
 #[derive(Default)]
 pub struct UserInput {
+  pub pad_x: f32,
+  pub pad_y: f32,
   pub x: f32,
   pub y: f32,
   pub clock_direction: i8,
@@ -34,10 +36,10 @@ pub fn handle_input_events(
       GamepadEvent(gamepad, GamepadEventType::AxisChanged(axis_type, value)) => {
         match axis_type {
           &GamepadAxisType::DPadX => {
-            x += *value;
+            input.pad_x = value.clone();
           },
           &GamepadAxisType::DPadY=> {
-            y += *value;
+            input.pad_y = value.clone();
           }
           _ => {}
         };
@@ -61,6 +63,6 @@ pub fn handle_input_events(
   if keyboard_input.pressed(KeyCode::X) {
     input.clock_direction = -1;
   }
-  input.x = x;
-  input.y = y;
+  input.x = input.pad_x.clone() + x;
+  input.y = input.pad_y.clone() + y;
 }

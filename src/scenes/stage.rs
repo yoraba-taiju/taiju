@@ -33,7 +33,7 @@ pub fn setup(
   mut materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
 ) {
-  commands.insert_resource(ScenarioDirector::load(asset_server));
+  commands.insert_resource(ScenarioDirector::spawn(&clock, asset_server));
   // witches
   commands.spawn()
     .insert_bundle(SpriteBundle {

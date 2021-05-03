@@ -21,6 +21,6 @@ impl AssetLoader for ScenarioLoader {
   }
 
   fn extensions(&self) -> &[&str] {
-    &["json"]
+    &["ron"]
   }
 }
