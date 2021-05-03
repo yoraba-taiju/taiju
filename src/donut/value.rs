@@ -61,17 +61,17 @@ impl <T: Clone> Value<T> {
     let mut beg: usize = 0;
     let mut end: usize = self.history.len();
     // Optimization path
-    let last_ticks = self.history[end-1].time.ticks;
-    if last_ticks < subjective_time.ticks {
+    let last_ticks = &self.history[end-1].time.ticks;
+    if *last_ticks < subjective_time.ticks {
       return end;
     }
-    if last_ticks == subjective_time.ticks {
+    if *last_ticks == subjective_time.ticks {
       return end - 1;
     }
     while beg < end {
       let mid = beg + (end - beg)/2;
-      let mid_t = self.history[mid].time.ticks;
-      if mid_t < ticks {
+      let mid_t = &self.history[mid].time.ticks;
+      if *mid_t < ticks {
         beg = mid + 1;
       } else {
         end = mid;
@@ -88,8 +88,8 @@ impl <T: Clone> Value<T> {
     }
     while beg < end {
       let mid = beg + (end - beg)/2;
-      let mid_t = self.history[mid].time.ticks;
-      if mid_t <= adjusted_time {
+      let mid_t = &self.history[mid].time.ticks;
+      if *mid_t <= adjusted_time {
         beg = mid + 1;
       } else {
         end = mid;
@@ -143,8 +143,8 @@ impl <T: Clone> DerefMut for Value<T> {
         self.history.truncate(idx + 1);
       }
       if self.history.len() == 1 {
-        let latest_ticks = self.history.front().unwrap().time.ticks;
-        if latest_ticks != current_time.ticks {
+        let latest_ticks = &self.history.front().unwrap().time.ticks;
+        if *latest_ticks != current_time.ticks {
           panic!("Do not refer non-existent value!")
         }
       } else {
