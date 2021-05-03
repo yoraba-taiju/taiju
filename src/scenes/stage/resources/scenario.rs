@@ -1,3 +1,6 @@
+use std::ops::DerefMut;
+use std::ops::Deref;
+
 use crate::scenes::stage::prelude::*;
 use bevy::reflect::TypeUuid;
 
@@ -73,7 +76,7 @@ impl ScenarioDirector {
     sora: &(Entity, &Position),
   ) {
     let scenario = self.scenario.as_ref().unwrap();
-    let current = clock.current_tick();
+    let current = clock.current_tick() - self.started.clone();
     for i in self.read_events..scenario.events.len() {
       let (at, ev) = scenario.events[i].clone();
       if at > current {
@@ -84,7 +87,14 @@ impl ScenarioDirector {
         Event::WitchSpeedChanged(x, y) => { *self.scene_speed = (x,y); }
       }
     }
-
+    let pos = {
+      let speed = *self.scene_speed;
+      let mut p = *self.scene_position;
+      p.0 += speed.0;
+      p.1 += speed.1;
+      *self.scene_position = pos;
+      p
+    };
   }
 }
 
