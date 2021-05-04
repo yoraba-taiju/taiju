@@ -39,7 +39,7 @@ impl Clock {
       leap_intersection: RwLock::new(Vec::new()),
     })
   }
-  pub fn value<T: Clone>(self: &Arc<Self>, value: T) -> Value<T> {
+  pub fn make<T: Clone>(self: &Arc<Self>, value: T) -> Value<T> {
     Value::new(self, value)
   }
   pub fn current_time(&self) -> SubjectiveTime {

@@ -58,15 +58,15 @@ impl ScenarioSequencer {
     Self{
       handle,
       started: clock.current_tick(),
-      read_events: clock.value(0),
-      spawned_objects: clock.value(0),
-      scene_speed: clock.value(Default::default()),
-      scene_position: clock.value(Default::default()),
+      read_events: clock.make(0),
+      spawned_objects: clock.make(0),
+      scene_speed: clock.make(Default::default()),
+      scene_position: clock.make(Default::default()),
     }
   }
   pub fn update(
     mut seq: ResMut<ScenarioSequencer>,
-    mut scenarios: Res<Assets<Scenario>>,
+    scenarios: Res<Assets<Scenario>>,
     clock: Res<ClockRef>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,

@@ -46,10 +46,10 @@ pub fn setup(
     .insert(Sora {
     })
     .insert(Witch {
-      health: clock.value(100),
-      spell: clock.value(100),
+      health: clock.make(100),
+      spell: clock.make(100),
     })
-    .insert(clock.value(Position {
+    .insert(clock.make(Position {
       x: -400.0,
       y: 0.0,
     }))
