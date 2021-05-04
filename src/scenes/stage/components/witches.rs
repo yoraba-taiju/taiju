@@ -31,6 +31,7 @@ impl Sora {
       }))
       .insert_bundle(SpriteBundle {
         material: color_materials.add(texture_handle.into()),
+        transform: Transform::from_scale(Vec3::new(0.75, 0.75, 0.75)),
         ..Default::default()
       })
     ;
