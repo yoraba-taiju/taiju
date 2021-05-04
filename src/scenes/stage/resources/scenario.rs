@@ -42,9 +42,8 @@ impl Scenario {
 
 //
 
-pub struct ScenarioDirector {
+pub struct ScenarioSequencer {
   handle: Handle<Scenario>,
-  scenario: Option<Scenario>,
   started: u32,
   //
   read_events: Value<usize>,
@@ -53,72 +52,45 @@ pub struct ScenarioDirector {
   scene_position: Value<Position>
 }
 
-impl ScenarioDirector {
+impl ScenarioSequencer {
   pub fn spawn(clock: &Res<ClockRef>, asset_server: Res<AssetServer>) -> Self {
     let handle = asset_server.load::<Scenario, _>("scenario/stage01.ron");
     Self{
       handle,
-      scenario: None,
-      started: 0,
+      started: clock.current_tick(),
       read_events: clock.value(0),
       spawned_objects: clock.value(0),
       scene_speed: clock.value(Default::default()),
       scene_position: clock.value(Default::default()),
     }
   }
-  pub fn init(&mut self, current: SubjectiveTime) {
-    self.started = current.ticks;
-  }
-  pub fn handle(
-    &mut self,
-    clock: &Res<ClockRef>,
-    commands: &mut Commands,
+  pub fn update(
+    mut seq: ResMut<ScenarioSequencer>,
+    mut scenarios: Res<Assets<Scenario>>,
+    clock: Res<ClockRef>,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
-    sora: &(Entity, &Position),
+    sora_query: Query<(Entity, &Value<Position>), With<Sora>>,
   ) {
-    let scenario = self.scenario.as_ref().unwrap();
-    let current = clock.current_tick() - self.started.clone();
-    for i in (*self.read_events)..scenario.events.len() {
+    let scenario = scenarios.get(&seq.handle).unwrap();
+    let sora: (Entity, &Value<Position>) = sora_query.single().unwrap();
+    let current = clock.current_tick() - seq.started.clone();
+    for i in (*seq.read_events)..scenario.events.len() {
       let (at, ev) = scenario.events[i].clone();
       if at > current {
         break;
       }
-      *self.read_events += 1;
+      *seq.read_events += 1;
       match ev {
-        Event::WitchSpeedChanged(motion) => { *self.scene_speed = motion; }
+        Event::WitchSpeedChanged(motion) => { *seq.scene_speed = motion; }
       }
     }
-    self.scene_position.advance(&self.scene_speed);
-    let pos = *self.scene_position;
-    for i in (*self.spawned_objects)..scenario.objects.len() {
+    let speed = *seq.scene_speed;
+    seq.scene_position.advance(&speed);
+    let pos = *seq.scene_position;
+    for i in (*seq.spawned_objects)..scenario.objects.len() {
       let obj = &scenario.objects[i];
-      (*self.spawned_objects) += 1;
+      (*seq.spawned_objects) += 1;
     }
   }
-}
-
-pub fn spawn_scenario(
-  clock: Res<ClockRef>,
-  mut director: ResMut<ScenarioDirector>,
-  mut assets: ResMut<Assets<Scenario>>,
-) {
-  if director.scenario.is_none() {
-    director.scenario = assets.remove(&director.handle);
-    director.handle = Handle::default();
-    director.init(clock.current_time());
-  }
-}
-
-pub fn progress_scenario(
-  clock: Res<ClockRef>,
-  mut commands: Commands,
-  asset_server: Res<AssetServer>,
-  sora_query: Query<(Entity, &Position), With<Sora>>,
-  mut director: ResMut<ScenarioDirector>,
-) {
-  if director.scenario.is_none() {
-    return;
-  }
-  let sora: (Entity, &Position) = sora_query.single().unwrap();
-  director.handle(&clock, &mut commands, asset_server, &sora);
 }

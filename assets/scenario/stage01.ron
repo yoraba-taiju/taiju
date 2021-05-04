@@ -1,4 +1,4 @@
 Scenario(
-  events:[(0, WitchSpeedChanged(32.0, 0))],
+  events:[(0, WitchSpeedChanged(Constant(32.0, 0)))],
   objects:[]
 )

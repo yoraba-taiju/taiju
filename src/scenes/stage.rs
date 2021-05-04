@@ -33,8 +33,9 @@ pub fn setup(
   mut materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
 ) {
-  commands.insert_resource(ScenarioDirector::spawn(&clock, asset_server));
+  commands.insert_resource(ScenarioSequencer::spawn(&clock, asset_server));
   // witches
+  Sora::spawn(&mut commands);
   commands.spawn()
     .insert_bundle(SpriteBundle {
       material: materials.add(Color::rgb(0.5, 0.5, 1.0).into()),
