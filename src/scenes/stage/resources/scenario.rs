@@ -43,7 +43,7 @@ impl Scenario {
 //
 
 pub struct ScenarioSequencer {
-  handle: Handle<Scenario>,
+  scenario_handle: Handle<Scenario>,
   started: u32,
   //
   read_events: Value<usize>,
@@ -56,7 +56,7 @@ impl ScenarioSequencer {
   pub fn spawn(clock: &Res<ClockRef>, asset_server: Res<AssetServer>) -> Self {
     let handle = asset_server.load::<Scenario, _>("scenario/stage01.ron");
     Self{
-      handle,
+      scenario_handle: handle,
       started: clock.current_tick(),
       read_events: clock.make(0),
       spawned_objects: clock.make(0),
@@ -72,7 +72,7 @@ impl ScenarioSequencer {
     asset_server: Res<AssetServer>,
     sora_query: Query<(Entity, &Value<Position>), With<Sora>>,
   ) {
-    let scenario = scenarios.get(&seq.handle).unwrap();
+    let scenario = scenarios.get(&seq.scenario_handle).unwrap();
     let sora: (Entity, &Value<Position>) = sora_query.single().unwrap();
     let current = clock.current_tick() - seq.started.clone();
     for i in (*seq.read_events)..scenario.events.len() {
