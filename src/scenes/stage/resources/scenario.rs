@@ -53,7 +53,7 @@ pub struct ScenarioSequencer {
 }
 
 impl ScenarioSequencer {
-  pub fn spawn(clock: &Res<ClockRef>, asset_server: Res<AssetServer>) -> Self {
+  pub fn spawn(clock: &Res<ClockRef>, asset_server: &Res<AssetServer>) -> Self {
     let handle = asset_server.load::<Scenario, _>("scenario/stage01.ron");
     Self{
       scenario_handle: handle,

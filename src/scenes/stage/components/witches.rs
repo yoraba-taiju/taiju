@@ -11,8 +11,29 @@ pub struct Sora {
 }
 
 impl Sora {
-  pub fn spawn(commands: &mut Commands) {
-
+  pub fn spawn(
+    clock: &Res<ClockRef>,
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    color_materials: &mut ResMut<Assets<ColorMaterial>>
+  ) {
+    let texture_handle = asset_server.load("sprites/sora.png");
+    commands.spawn()
+      .insert(Sora {
+      })
+      .insert(Witch {
+        health: clock.make(100),
+        spell: clock.make(100),
+      })
+      .insert(clock.make(Position {
+        x: -400.0,
+        y: 0.0,
+      }))
+      .insert_bundle(SpriteBundle {
+        material: color_materials.add(texture_handle.into()),
+        ..Default::default()
+      })
+    ;
   }
   pub fn update(input: Res<UserInput>, mut query: Query<(&mut Value<Position>), With<Sora>>) {
     let pos: &mut Value<Position> = &mut (query.single_mut().unwrap());

@@ -30,30 +30,12 @@ impl StageScene {
 pub fn setup(
   mut commands: Commands,
   clock: Res<ClockRef>,
-  mut materials: ResMut<Assets<ColorMaterial>>,
+  mut color_materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
 ) {
-  commands.insert_resource(ScenarioSequencer::spawn(&clock, asset_server));
+  commands.insert_resource(ScenarioSequencer::spawn(&clock, &asset_server));
   // witches
-  Sora::spawn(&mut commands);
-  commands.spawn()
-    .insert_bundle(SpriteBundle {
-      material: materials.add(Color::rgb(0.5, 0.5, 1.0).into()),
-      transform: Transform::from_xyz(0.0, 0.0, 0.0),
-      sprite: Sprite::new(Vec2::new(10.0, 10.0)),
-      ..Default::default()
-    })
-    .insert(Sora {
-    })
-    .insert(Witch {
-      health: clock.make(100),
-      spell: clock.make(100),
-    })
-    .insert(clock.make(Position {
-      x: -400.0,
-      y: 0.0,
-    }))
-  ;
+  Sora::spawn(&clock, &mut commands, &asset_server, &mut color_materials);
 
   // cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
