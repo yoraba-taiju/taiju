@@ -48,7 +48,10 @@ pub fn setup(
       health: clock.value(100),
       spell: clock.value(100),
     })
-    .insert(Position::new(&clock, -100.0, 0.0, 10.0, 10.0))
+    .insert(clock.value(Position {
+      x: -400.0,
+      y: 0.0,
+    }))
   ;
 
   // cameras

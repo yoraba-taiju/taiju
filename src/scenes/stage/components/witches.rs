@@ -22,8 +22,7 @@ pub struct Kaede {
 
 }
 
-pub fn move_sora(input: Res<UserInput>, mut query: Query<(&mut Position), With<Sora>>) {
-  let pos: &mut Position = &mut (query.single_mut().unwrap());
-  *pos.x += (*input).x * 500.0 / 60.0;
-  *pos.y += (*input).y * 500.0 / 60.0;
+pub fn move_sora(input: Res<UserInput>, mut query: Query<(&mut Value<Position>), With<Sora>>) {
+  let pos: &mut Value<Position> = &mut (query.single_mut().unwrap());
+  pos.advance(&Motion::Constant(input.x.clone() * 500.0 / 60.0, input.y.clone() * 500.0 / 60.0));
 }

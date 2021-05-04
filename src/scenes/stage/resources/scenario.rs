@@ -8,13 +8,12 @@ pub mod loader;
 pub use loader::ScenarioLoader;
 
 use anyhow::{Result, Context};
-use serde::{Serialize, Deserialize};
 use bevy::asset::Asset;
 use crate::donut::SubjectiveTime;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Event {
-  WitchSpeedChanged(f32, f32,),
+  WitchSpeedChanged(Motion),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -48,9 +47,10 @@ pub struct ScenarioDirector {
   scenario: Option<Scenario>,
   started: u32,
   //
-  read_events: usize,
-  scene_speed: Value<(f32,f32)>,
-  scene_position: Value<(f32, f32)>
+  read_events: Value<usize>,
+  spawned_objects: Value<usize>,
+  scene_speed: Value<Motion>,
+  scene_position: Value<Position>
 }
 
 impl ScenarioDirector {
@@ -60,7 +60,8 @@ impl ScenarioDirector {
       handle,
       scenario: None,
       started: 0,
-      read_events: 0,
+      read_events: clock.value(0),
+      spawned_objects: clock.value(0),
       scene_speed: clock.value(Default::default()),
       scene_position: clock.value(Default::default()),
     }
@@ -77,24 +78,22 @@ impl ScenarioDirector {
   ) {
     let scenario = self.scenario.as_ref().unwrap();
     let current = clock.current_tick() - self.started.clone();
-    for i in self.read_events..scenario.events.len() {
+    for i in (*self.read_events)..scenario.events.len() {
       let (at, ev) = scenario.events[i].clone();
       if at > current {
         break;
       }
-      self.read_events+=1;
+      *self.read_events += 1;
       match ev {
-        Event::WitchSpeedChanged(x, y) => { *self.scene_speed = (x,y); }
+        Event::WitchSpeedChanged(motion) => { *self.scene_speed = motion; }
       }
     }
-    let pos = {
-      let speed = *self.scene_speed;
-      let mut p = *self.scene_position;
-      p.0 += speed.0;
-      p.1 += speed.1;
-      *self.scene_position = pos;
-      p
-    };
+    self.scene_position.advance(&self.scene_speed);
+    let pos = *self.scene_position;
+    for i in (*self.spawned_objects)..scenario.objects.len() {
+      let obj = &scenario.objects[i];
+      (*self.spawned_objects) += 1;
+    }
   }
 }
 
