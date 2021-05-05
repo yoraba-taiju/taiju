@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
 mod donut;
-mod system;
 mod scenes;
 
 fn main() {
