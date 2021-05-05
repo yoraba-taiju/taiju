@@ -43,7 +43,7 @@ pub fn move_by_motion(_clock: Res<ClockRef>, mut query: Query<(&mut Value<Positi
   }
 }
 
-pub fn copy_to_transform(input: Res<UserInput>, mut query: Query<(&Value<Position>, &mut Transform)>) {
+pub fn copy_to_transform(mut query: Query<(&Value<Position>, &mut Transform)>) {
   for (pos, mut trans) in query.iter_mut() {
     let pos: &Value<Position> = &pos;
     let trans: &mut Transform = &mut trans;
@@ -52,10 +52,10 @@ pub fn copy_to_transform(input: Res<UserInput>, mut query: Query<(&Value<Positio
   }
 }
 
-pub fn handle_entity_vanishes(
+pub fn handle_entity_vanishing(
   mut commands: Commands,
   clock: Res<ClockRef>,
-  mut query: Query<(Entity, &Value<Position>), Without<Vanished>>
+  mut query: Query<(Entity, &Value<Position>), (Without<Vanished>, Without<Witch>)>
 ) {
   for (entity, pos) in query.iter_mut() {
     let entity: Entity = entity;
