@@ -30,7 +30,7 @@ impl Debug for Clock {
 }
 
 impl Clock {
-  pub(crate) fn new() -> ClockRef {
+  pub fn new() -> ClockRef {
     Arc::new(Self {
       current: RwLock::new(SubjectiveTime{
         leaps: 0,
