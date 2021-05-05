@@ -1,4 +1,4 @@
-use crate::scenes::stage::prelude::*;
+use crate::stage::prelude::*;
 use crate::donut::RECORDED_FRAMES;
 
 #[derive(Debug)]

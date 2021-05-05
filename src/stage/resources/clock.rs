@@ -1,4 +1,4 @@
-use crate::scenes::stage::prelude::*;
+use crate::stage::prelude::*;
 
 pub fn control_clock(
   input: Res<UserInput>,

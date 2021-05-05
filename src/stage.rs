@@ -1,5 +1,8 @@
+use bevy::asset::LoadState;
 use bevy::prelude::*;
-use crate::scenes::stage::prelude::*;
+
+use crate::stage::prelude::*;
+use crate::app::AppState;
 
 pub mod components;
 pub mod resources;
@@ -10,20 +13,10 @@ pub struct StagePlugin;
 
 impl Plugin for StagePlugin {
   fn build(&self, app: &mut AppBuilder) {
-    use crate::scenes::stage::scenario::*;
+    use crate::stage::scenario::*;
     app
       .init_asset_loader::<ScenarioLoader>()
       .add_asset::<Scenario>();
-  }
-}
-
-pub struct StageScene {
-}
-
-impl StageScene {
-  pub fn new() -> Self {
-    Self {
-    }
   }
 }
 
@@ -45,4 +38,24 @@ pub fn setup(
   // cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
   commands.spawn_bundle(UiCameraBundle::default());
+}
+
+pub fn check_setup(
+  mut state: ResMut<State<AppState>>,
+  asset_server: Res<AssetServer>,
+  scenario_server: Res<ScenarioSever>,
+  enemy_server: Res<EnemyServer>,
+  bullet_server: Res<BulletServer>,
+) {
+  if LoadState::Loaded != asset_server.get_group_load_state(scenario_server.get_asset_handles()) {
+    return;
+  }
+  // TODO: handle texture loading correctly (or not).
+  if LoadState::Loaded != asset_server.get_group_load_state(enemy_server.get_asset_handles()) {
+    //return;
+  }
+  if LoadState::Loaded != asset_server.get_group_load_state(bullet_server.get_asset_handles()) {
+    //return;
+  }
+  state.set(AppState::Stage).unwrap();
 }

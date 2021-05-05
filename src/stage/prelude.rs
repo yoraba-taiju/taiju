@@ -16,5 +16,4 @@ pub use super::{
     user_input::*,
   },
   StagePlugin,
-  StageScene,
 };

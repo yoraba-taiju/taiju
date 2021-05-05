@@ -1,14 +1,14 @@
 use std::ops::DerefMut;
 use std::ops::Deref;
 
-use crate::scenes::stage::prelude::*;
+use crate::stage::prelude::*;
 use bevy::reflect::TypeUuid;
 
 pub mod loader;
 pub use loader::ScenarioLoader;
 
 use anyhow::{Result, Context};
-use bevy::asset::Asset;
+use bevy::asset::{Asset, HandleId};
 use crate::donut::SubjectiveTime;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -68,6 +68,9 @@ impl ScenarioSever {
       scene_speed: clock.make(Default::default()),
       scene_position: clock.make(Default::default()),
     });
+  }
+  pub fn get_asset_handles(&self) -> Vec<HandleId> {
+    vec![self.scenario_handle.id]
   }
   pub fn update(
     mut seq: ResMut<ScenarioSever>,

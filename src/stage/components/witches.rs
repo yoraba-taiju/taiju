@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::scenes::stage::prelude::*;
+use crate::stage::prelude::*;
 
 pub struct Witch {
   pub health: Value<u16>,

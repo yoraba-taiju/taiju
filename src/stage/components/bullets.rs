@@ -1,5 +1,6 @@
-use crate::scenes::stage::prelude::*;
+use crate::stage::prelude::*;
 use std::collections::HashMap;
+use bevy::asset::HandleId;
 
 pub struct Bullet {
 }
@@ -58,5 +59,13 @@ impl BulletServer {
       });
     }
     commands.insert_resource(s);
+  }
+  pub fn get_asset_handles(&self) -> Vec<HandleId> {
+    let mut handles = Vec::new();
+    self.sprites.values().for_each(|it| {
+      handles.push(it.material.id);
+      handles.push(it.mesh.id);
+    });
+    handles
   }
 }

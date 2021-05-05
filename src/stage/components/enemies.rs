@@ -1,6 +1,7 @@
 use bevy::prelude::*;
-use crate::scenes::stage::prelude::*;
+use crate::stage::prelude::*;
 use std::collections::HashMap;
+use bevy::asset::HandleId;
 
 pub struct Enemy {
 
@@ -42,6 +43,14 @@ impl EnemyServer {
       });
     }
     commands.insert_resource(s);
+  }
+  pub fn get_asset_handles(&self) -> Vec<HandleId> {
+    let mut handles: Vec<HandleId> = Vec::new();
+    for (_, it) in &self.sprites {
+      handles.push(it.material.id);
+      handles.push(it.mesh.id);
+    }
+    handles
   }
   pub fn spawn_enemy(
     &self,

@@ -1,4 +1,4 @@
-use crate::scenes::stage::prelude::*;
+use crate::stage::prelude::*;
 use bevy::asset::{AssetLoader, LoadContext, LoadedAsset};
 
 use anyhow::Result;
