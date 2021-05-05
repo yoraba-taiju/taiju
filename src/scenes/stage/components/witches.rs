@@ -17,7 +17,7 @@ impl Sora {
     asset_server: &Res<AssetServer>,
     color_materials: &mut ResMut<Assets<ColorMaterial>>
   ) {
-    let texture_handle = asset_server.load("sprites/sora.png");
+    let texture_handle = asset_server.load("sprites/witches/sora.png");
     commands.spawn()
       .insert(Sora {
       })
@@ -26,7 +26,7 @@ impl Sora {
         spell: clock.make(100),
       })
       .insert(clock.make(Position {
-        x: -400.0,
+        x: -700.0,
         y: 0.0,
       }))
       .insert_bundle(SpriteBundle {
@@ -38,7 +38,7 @@ impl Sora {
   }
   pub fn update(input: Res<UserInput>, mut query: Query<(&mut Value<Position>), With<Sora>>) {
     let pos: &mut Value<Position> = &mut (query.single_mut().unwrap());
-    pos.advance(&Motion::Constant(input.x.clone() * 500.0 / 60.0, input.y.clone() * 500.0 / 60.0));
+    pos.apply(&Motion::Constant(input.x.clone() * 500.0 / 60.0, input.y.clone() * 500.0 / 60.0));
   }
 }
 

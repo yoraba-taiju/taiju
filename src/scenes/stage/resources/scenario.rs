@@ -13,7 +13,8 @@ use crate::donut::SubjectiveTime;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Event {
-  WitchSpeedChanged(Motion),
+  ChangeWitchSpeed(Motion),
+  SpawnEnemy(EnemyDescription)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -42,7 +43,7 @@ impl Scenario {
 
 //
 
-pub struct ScenarioSequencer {
+pub struct ScenarioSever {
   scenario_handle: Handle<Scenario>,
   started: u32,
   //
@@ -52,7 +53,7 @@ pub struct ScenarioSequencer {
   scene_position: Value<Position>
 }
 
-impl ScenarioSequencer {
+impl ScenarioSever {
   pub fn spawn(clock: &Res<ClockRef>, asset_server: &Res<AssetServer>) -> Self {
     let handle = asset_server.load::<Scenario, _>("scenario/stage01.ron");
     Self{
@@ -65,11 +66,12 @@ impl ScenarioSequencer {
     }
   }
   pub fn update(
-    mut seq: ResMut<ScenarioSequencer>,
+    mut seq: ResMut<ScenarioSever>,
     scenarios: Res<Assets<Scenario>>,
     clock: Res<ClockRef>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    enemy_server: Res<EnemyServer>,
     sora_query: Query<(Entity, &Value<Position>), With<Sora>>,
   ) {
     let scenario = scenarios.get(&seq.scenario_handle).unwrap();
@@ -82,11 +84,14 @@ impl ScenarioSequencer {
       }
       *seq.read_events += 1;
       match ev {
-        Event::WitchSpeedChanged(motion) => { *seq.scene_speed = motion; }
+        Event::ChangeWitchSpeed(motion) => { *seq.scene_speed = motion; }
+        Event::SpawnEnemy(desc) => {
+          enemy_server.spawn_enemy(&desc, &clock, &mut commands);
+        }
       }
     }
     let speed = *seq.scene_speed;
-    seq.scene_position.advance(&speed);
+    seq.scene_position.apply(&speed);
     let pos = *seq.scene_position;
     for i in (*seq.spawned_objects)..scenario.objects.len() {
       let obj = &scenario.objects[i];

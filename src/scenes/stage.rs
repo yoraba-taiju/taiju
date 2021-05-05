@@ -30,10 +30,12 @@ impl StageScene {
 pub fn setup(
   mut commands: Commands,
   clock: Res<ClockRef>,
+  mut texture_atlases: ResMut<Assets<TextureAtlas>>,
   mut color_materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
 ) {
-  commands.insert_resource(ScenarioSequencer::spawn(&clock, &asset_server));
+  commands.insert_resource(ScenarioSever::spawn(&clock, &asset_server));
+  commands.insert_resource(EnemyServer::spawn(&asset_server, &mut color_materials, &mut texture_atlases));
   // witches
   Sora::spawn(&clock, &mut commands, &asset_server, &mut color_materials);
 

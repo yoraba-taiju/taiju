@@ -6,6 +6,7 @@ pub use super::{
     lifecycles::*,
     geom::*,
     witches::*,
+    enemies::*,
     bullets::*,
   },
   resources::{
