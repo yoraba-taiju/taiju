@@ -54,16 +54,20 @@ pub struct ScenarioSever {
 }
 
 impl ScenarioSever {
-  pub fn spawn(clock: &Res<ClockRef>, asset_server: &Res<AssetServer>) -> Self {
+  pub fn spawn(
+    commands: &mut Commands,
+    clock: &Res<ClockRef>,
+    asset_server: &Res<AssetServer>,
+  ) {
     let handle = asset_server.load::<Scenario, _>("scenario/stage01.ron");
-    Self{
+    commands.insert_resource(ScenarioSever{
       scenario_handle: handle,
       started: clock.current_tick(),
       read_events: clock.make(0),
       spawned_objects: clock.make(0),
       scene_speed: clock.make(Default::default()),
       scene_position: clock.make(Default::default()),
-    }
+    });
   }
   pub fn update(
     mut seq: ResMut<ScenarioSever>,

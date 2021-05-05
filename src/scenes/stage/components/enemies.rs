@@ -27,10 +27,11 @@ pub struct EnemyServer {
 
 impl EnemyServer {
   pub fn spawn(
+    commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     color_materials: &mut ResMut<Assets<ColorMaterial>>,
     texture_atlases: &mut ResMut<Assets<TextureAtlas>>,
-  ) -> Self {
+  ) {
     let mut s = EnemyServer::default();
     { // Enemy 01
       let texture = asset_server.load::<Texture, _>("sprites/bullets/blue_small.png");
@@ -40,7 +41,7 @@ impl EnemyServer {
         ..Default::default()
       });
     }
-    s
+    commands.insert_resource(s);
   }
   pub fn spawn_enemy(
     &self,

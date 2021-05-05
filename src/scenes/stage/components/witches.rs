@@ -12,8 +12,8 @@ pub struct Sora {
 
 impl Sora {
   pub fn spawn(
-    clock: &Res<ClockRef>,
     commands: &mut Commands,
+    clock: &Res<ClockRef>,
     asset_server: &Res<AssetServer>,
     color_materials: &mut ResMut<Assets<ColorMaterial>>
   ) {

@@ -34,10 +34,13 @@ pub fn setup(
   mut color_materials: ResMut<Assets<ColorMaterial>>,
   asset_server: Res<AssetServer>,
 ) {
-  commands.insert_resource(ScenarioSever::spawn(&clock, &asset_server));
-  commands.insert_resource(EnemyServer::spawn(&asset_server, &mut color_materials, &mut texture_atlases));
+  // Resources to load
+  ScenarioSever::spawn(&mut commands, &clock, &asset_server);
+  EnemyServer::spawn(&mut commands, &asset_server, &mut color_materials, &mut texture_atlases);
+  BulletServer::spawn(&mut commands, &asset_server, &mut color_materials, &mut texture_atlases);
+
   // witches
-  Sora::spawn(&clock, &mut commands, &asset_server, &mut color_materials);
+  Sora::spawn(&mut commands, &clock, &asset_server, &mut color_materials);
 
   // cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
