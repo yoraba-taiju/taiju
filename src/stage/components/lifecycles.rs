@@ -47,7 +47,7 @@ pub fn handle_lifetime(
     for (entity, mut vanished) in v_query.iter_mut() {
       let entity: Entity = entity;
       let vanished: &mut Vanished = &mut vanished;
-      if vanished.at + (RECORDED_FRAMES as u32) < current {
+      if &vanished.at + (RECORDED_FRAMES as u32) < current {
         commands.entity(entity).despawn_recursive();
       }else if current < vanished.at {
         commands.entity(entity).remove::<Vanished>();

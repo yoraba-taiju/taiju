@@ -59,9 +59,14 @@ impl EnemyServer {
     commands: &mut Commands,
   ) {
     let mut c = commands.spawn();
+    c.insert(Enemy{});
+    c.insert(Spawned::new(&clock));
     match desc.body {
       EnemyBody::Enemy01 => {
-        c.insert_bundle(self.sprites[&EnemyBody::Enemy01].clone());
+        let mut sprite = self.sprites[&EnemyBody::Enemy01].clone();
+        sprite.transform.translation.x = desc.position.x.clone();
+        sprite.transform.translation.y = desc.position.y.clone();
+        c.insert_bundle(sprite);
       }
     };
     c.insert(clock.make(desc.position.clone()));
