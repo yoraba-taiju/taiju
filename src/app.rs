@@ -9,9 +9,9 @@ pub enum AppState {
 }
 
 #[derive(Clone, Hash, Debug, PartialEq, Eq, SystemLabel)]
-pub enum Stage {
+pub enum ChapterStage {
   PrepareFrame,
-  Update,
+  UpdateStates,
   RenderFrame,
   EndFrame,
 }
@@ -52,24 +52,24 @@ pub fn build() -> App {
     // https://github.com/bevyengine/bevy/blob/38feddb87850424df3a0b08bae8dc32c57004798/examples/ecs/system_sets.rs
   builder
     .add_system_set(SystemSet::on_update(AppState::Stage)
-      .label(Stage::PrepareFrame)
+      .label(ChapterStage::PrepareFrame)
       .with_system(handle_input_events.system())
     )
     .add_system_set(SystemSet::on_update(AppState::Stage)
-      .label(Stage::Update)
-      .after(Stage::PrepareFrame)
+      .label(ChapterStage::UpdateStates)
+      .after(ChapterStage::PrepareFrame)
       .with_system(move_by_motion.system())
       .with_system(Sora::update.system())
     )
     .add_system_set(SystemSet::on_update(AppState::Stage)
-      .label(Stage::RenderFrame)
-      .after(Stage::Update)
+      .label(ChapterStage::RenderFrame)
+      .after(ChapterStage::UpdateStates)
       .with_system(copy_pos_to_transform.system())
       .with_system(handle_entity_vanishing.system())
     )
     .add_system_set(SystemSet::on_update(AppState::Stage)
-      .label(Stage::EndFrame)
-      .after(Stage::RenderFrame)
+      .label(ChapterStage::EndFrame)
+      .after(ChapterStage::RenderFrame)
       .with_system(control_clock.system())
       .with_system(handle_lifetime.system())
       .with_system(ScenarioSever::update.system())
