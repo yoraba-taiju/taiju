@@ -57,5 +57,5 @@ pub fn check_setup(
   if LoadState::Loaded != asset_server.get_group_load_state(bullet_server.get_asset_handles()) {
     //return;
   }
-  state.set(AppState::Stage).unwrap();
+  state.set(AppState::InChapter).unwrap();
 }
