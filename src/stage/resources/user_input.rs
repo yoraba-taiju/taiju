@@ -34,10 +34,10 @@ pub fn handle_input_events(
       GamepadEvent(gamepad, GamepadEventType::AxisChanged(axis_type, value)) => {
         match axis_type {
           &GamepadAxisType::DPadX => {
-            input.pad_x = value.clone();
+            input.pad_x = *value;
           },
           &GamepadAxisType::DPadY=> {
-            input.pad_y = value.clone();
+            input.pad_y = *value;
           }
           _ => {}
         };
@@ -63,6 +63,6 @@ pub fn handle_input_events(
   if keyboard_input.pressed(KeyCode::X) {
     input.clock_direction = -1;
   }
-  input.x = input.pad_x.clone() + keyboard_x;
-  input.y = input.pad_y.clone() + keyboard_y;
+  input.x = input.pad_x + keyboard_x;
+  input.y = input.pad_y + keyboard_y;
 }

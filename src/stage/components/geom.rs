@@ -14,8 +14,8 @@ pub struct Position {
 
 impl Position {
   pub fn apply(&mut self, motion: &Motion) {
-    match motion.clone() {
-      Motion::Constant(x, y) => {
+    match motion {
+      &Motion::Constant(x, y) => {
         self.x += x;
         self.y += y;
       }
@@ -46,8 +46,8 @@ pub fn copy_pos_to_transform(mut query: Query<(&Value<Position>, &mut Transform)
   for (pos, mut trans) in query.iter_mut() {
     let pos: &Value<Position> = &pos;
     let trans: &mut Transform = &mut trans;
-    trans.translation.x = pos.x.clone();
-    trans.translation.y = pos.y.clone();
+    trans.translation.x = pos.x;
+    trans.translation.y = pos.y;
   }
 }
 
@@ -59,8 +59,8 @@ pub fn handle_entity_vanishing(
   for (entity, pos) in query.iter_mut() {
     let entity: Entity = entity;
     let pos: &Value<Position> = &pos;
-    let x = (&pos.x).clone();
-    let y = (&pos.y).clone();
+    let x = pos.x.clone();
+    let y = pos.y.clone();
     if x < (-30.0-(1920.0/2.0)) ||
       (30.0+(1920.0/2.0)) < x ||
       y < (-30.0-(1080.0/2.0)) ||
@@ -90,7 +90,7 @@ pub fn copy_rotation_to_transform(mut query: Query<(&Value<Rotation>, &mut Trans
   for (rot, mut trans) in query.iter_mut() {
     let rot: &Value<Rotation> = &rot;
     let trans: &mut Transform = &mut trans;
-    trans.rotation = rot.quaternion.clone();
+    trans.rotation = rot.quaternion;
   }
 }
 
@@ -98,11 +98,11 @@ pub fn move_by_angular_motion(_clock: Res<ClockRef>, mut query: Query<(&mut Valu
   for (mut rot, motion) in query.iter_mut() {
     let rot: &mut Value<Rotation> = &mut rot;
     let motion: &AngularMotion = &motion;
-    match motion.clone() {
-      AngularMotion::Constant(delta) => {
+    match motion {
+      &AngularMotion::Constant(delta) => {
         use bevy::math::{Mat3, Mat4, Quat, Vec3};
         use std::ops::Mul;
-        rot.quaternion = Quat::from_rotation_z(delta).mul(rot.quaternion.clone()).into();
+        rot.quaternion = Quat::from_rotation_z(delta).mul(rot.quaternion).into();
       }
     }
   }

@@ -38,7 +38,7 @@ impl Sora {
   }
   pub fn update(input: Res<UserInput>, mut query: Query<(&mut Value<Position>), With<Sora>>) {
     let pos: &mut Value<Position> = &mut (query.single_mut().unwrap());
-    pos.apply(&Motion::Constant(input.x.clone() * 500.0 / 60.0, input.y.clone() * 500.0 / 60.0));
+    pos.apply(&Motion::Constant(input.x * 500.0 / 60.0, input.y * 500.0 / 60.0));
   }
 }
 

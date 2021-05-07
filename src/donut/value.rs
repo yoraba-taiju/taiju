@@ -86,7 +86,7 @@ impl <T: Clone> DerefMut for Value<T> {
     };
     if write_index < self.history.len() {
       self.history.truncate(write_index + 1);
-      self.history[write_index] = prev.clone();
+      self.history[write_index] = prev;
       return &mut self.history[write_index];
     }
     if write_index < RECORDED_FRAMES {

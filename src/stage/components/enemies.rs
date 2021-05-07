@@ -64,14 +64,14 @@ impl EnemyServer {
     match desc.body {
       EnemyBody::Enemy01 => {
         let mut sprite = self.sprites[&EnemyBody::Enemy01].clone();
-        sprite.transform.translation.x = desc.position.x.clone();
-        sprite.transform.translation.y = desc.position.y.clone();
+        sprite.transform.translation.x = desc.position.x;
+        sprite.transform.translation.y = desc.position.y;
         c.insert_bundle(sprite);
       }
     };
-    c.insert(clock.make(desc.position.clone()));
+    c.insert(clock.make(desc.position));
     if let Some(motion) = desc.motion {
-      c.insert(motion.clone());
+      c.insert(motion);
     }
     if desc.rotation.is_some() || desc.angular_motion.is_some() {
       c.insert(clock.make(Rotation {
