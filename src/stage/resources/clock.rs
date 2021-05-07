@@ -7,8 +7,8 @@ pub fn control_clock(
 {
   if input.clock_direction < 0 {
     // TODO: フレームでリミッターをかける
-    if clock.current_tick() > 0 {
-      clock.leap(clock.current_tick() - 1);
+    if clock.current_ticks() > 0 {
+      clock.leap(clock.current_ticks() - 1);
     }
   }else{
     clock.tick();

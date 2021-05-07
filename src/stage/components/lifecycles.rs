@@ -9,7 +9,7 @@ pub struct Spawned {
 impl Spawned {
   pub(crate) fn new(clock: &ClockRef) ->Self {
     Self {
-      at: clock.current_tick(),
+      at: clock.current_ticks(),
     }
   }
 }
@@ -22,7 +22,7 @@ pub struct Vanished {
 impl Vanished {
   pub(crate) fn new(clock: &ClockRef) ->Self {
     Self {
-      at: clock.current_tick(),
+      at: clock.current_ticks(),
     }
   }
 }
@@ -34,7 +34,7 @@ pub fn handle_lifetime(
   mut s_query: Query<(Entity, &mut Spawned)>,
   mut v_query: Query<(Entity, &mut Vanished)>,
 ) {
-  let current = clock.current_tick();
+  let current = clock.current_ticks();
   if user_input.clock_direction <= 0 {
     for (entity, mut spawned) in s_query.iter_mut() {
       let entity: Entity = entity;

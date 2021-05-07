@@ -46,7 +46,7 @@ impl Clock {
     let t = self.current.read().expect("Failed to lock Clock (read)");
     t.clone()
   }
-  pub fn current_tick(&self) -> u32 {
+  pub fn current_ticks(&self) -> u32 {
     let t = self.current.read().expect("Failed to lock Clock (read)");
     t.ticks
   }

@@ -62,7 +62,7 @@ impl ScenarioSever {
     let handle = asset_server.load::<Scenario, _>("scenario/stage01.ron");
     commands.insert_resource(ScenarioSever{
       scenario_handle: handle,
-      started: clock.current_tick(),
+      started: clock.current_ticks(),
       read_events: clock.make(0),
       spawned_objects: clock.make(0),
       scene_speed: clock.make(Default::default()),
@@ -83,7 +83,7 @@ impl ScenarioSever {
   ) {
     let scenario = scenarios.get(&seq.scenario_handle).unwrap();
     let sora: (Entity, &Value<Position>) = sora_query.single().unwrap();
-    let current = clock.current_tick() - seq.started.clone();
+    let current = clock.current_ticks() - seq.started.clone();
     for i in (*seq.read_events)..scenario.events.len() {
       let (at, ev) = scenario.events[i].clone();
       if at > current {
