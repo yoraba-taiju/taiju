@@ -1,8 +1,4 @@
-use bevy::prelude::*;
-
-mod app;
-mod donut;
-mod stage;
+use taiju::*;
 
 fn main() {
   app::build().run()
