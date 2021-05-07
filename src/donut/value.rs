@@ -3,33 +3,13 @@ use std::ops::{Deref, DerefMut};
 use std::fmt::{Debug, Formatter};
 use std::collections::VecDeque;
 use std::sync::{Arc, Weak};
-
-struct ValueEntry<T> {
-  time: SubjectiveTime,
-  value: T,
-}
-
-impl <T> ValueEntry<T> {
-  fn new(time: SubjectiveTime, value: T) -> Self {
-    Self {
-      time,
-      value,
-    }
-  }
-}
-
-impl <T: Debug> Debug for ValueEntry<T> {
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    f.debug_struct("ValueEntry")
-      .field("time", &self.time)
-      .field("value", &self.value)
-      .finish()
-  }
-}
+use std::cmp::min;
 
 pub struct Value<T: Clone> {
   clock: Weak<Clock>,
-  history: VecDeque<ValueEntry<T>>,
+  last_modified_leaps: u32,
+  begin_ticks: u32,
+  history: VecDeque<T>,
 }
 
 impl <T: Debug + Clone> Debug for Value<T> {
@@ -37,7 +17,8 @@ impl <T: Debug + Clone> Debug for Value<T> {
     let history_str = {
       let inner = self.history
         .iter()
-        .map(|entry| format!("(({}, {}) = {:?})", &entry.time.leaps, &entry.time.ticks, &entry.value))
+        .zip((self.begin_ticks as usize)..(self.begin_ticks as usize + self.history.len()))
+        .map(|(v, ticks)| format!("{}: {:?}", ticks, v))
         .collect::<Vec<String>>()
         .join(", ");
       format!("[{}]", inner)
@@ -48,58 +29,16 @@ impl <T: Debug + Clone> Debug for Value<T> {
 
 impl <T: Clone> Value<T> {
   pub(crate) fn new(clock: &Arc<Clock>, initial: T) -> Self {
+    let current_time = clock.current_time();
     let mut s = Self {
       clock: Arc::downgrade(clock),
+      last_modified_leaps: current_time.leaps,
+      begin_ticks: current_time.ticks,
       history: VecDeque::new(),
     };
-    s.history.reserve_exact(RECORDED_FRAMES);
-    s.history.push_back(ValueEntry::new(clock.current_time(), initial));
+    s.history.reserve(RECORDED_FRAMES);
+    s.history.push_back(initial);
     s
-  }
-  pub(crate) fn find_write_index(&self, subjective_time: SubjectiveTime) -> usize {
-    let ticks = subjective_time.ticks;
-    let mut beg: usize = 0;
-    let mut end: usize = self.history.len();
-    // Optimization path
-    let last_ticks = &self.history[end-1].time.ticks;
-    if *last_ticks < subjective_time.ticks {
-      return end;
-    }
-    if *last_ticks == subjective_time.ticks {
-      return end - 1;
-    }
-    while beg < end {
-      let mid = beg + (end - beg)/2;
-      let mid_t = &self.history[mid].time.ticks;
-      if *mid_t < ticks {
-        beg = mid + 1;
-      } else {
-        end = mid;
-      }
-    }
-    return end;
-  }
-  pub(crate) fn find_read_index(&self, adjusted_time: u32) -> Option<usize> {
-    let mut beg: usize = 0;
-    let mut end: usize = self.history.len();
-    // Optimization path
-    if self.history[end-1].time.ticks <= adjusted_time {
-      return Some(end-1);
-    }
-    while beg < end {
-      let mid = beg + (end - beg)/2;
-      let mid_t = &self.history[mid].time.ticks;
-      if *mid_t <= adjusted_time {
-        beg = mid + 1;
-      } else {
-        end = mid;
-      }
-    }
-    if end == 0 {
-      None
-    } else {
-      Some(beg - 1)
-    }
   }
   #[cfg(test)]
   pub(crate) fn capacity(&self) -> usize {
@@ -109,6 +48,14 @@ impl <T: Clone> Value<T> {
   pub(crate) fn len(&self) -> usize {
     self.history.len()
   }
+
+  fn find_read_index(&self, clock: &Arc<Clock>, ticks: u32) -> Option<usize> {
+    let time = clock.adjust_read_time(self.last_modified_leaps, ticks);
+    if time < self.begin_ticks {
+      return None;
+    }
+    return Some(min((time - self.begin_ticks) as usize, self.history.len() - 1));
+  }
 }
 
 impl <T: Clone> Deref for Value<T> {
@@ -116,12 +63,8 @@ impl <T: Clone> Deref for Value<T> {
 
   fn deref(&self) -> &Self::Target {
     let clock = self.clock.upgrade().unwrap();
-    let time = clock.adjust_read_time(self.history[self.history.len() - 1].time);
-    let idx = self.find_read_index(time).unwrap();
-    if idx == self.history.len() {
-      panic!("Do not refer non-existent value!")
-    }
-    &self.history[idx].value
+    let idx = self.find_read_index(&clock, clock.current_ticks()).expect("Don't read a value in the future!");
+    &self.history[idx]
   }
 }
 
@@ -129,33 +72,39 @@ impl <T: Clone> DerefMut for Value<T> {
   fn deref_mut(&mut self) -> &mut Self::Target {
     let clock = self.clock.upgrade().expect("Clock was missing.");
     let current_time = clock.current_time();
-    let idx = self.find_write_index(current_time);
-    if idx == RECORDED_FRAMES {
-      let latest_value = self.history[idx - 1].value.clone();
-      self.history.pop_front();
-      self.history.push_back(ValueEntry::new(current_time, latest_value));
-      &mut (self.history[idx - 1].value)
-    } else if idx == self.history.len() {
-      self.history.push_back(ValueEntry::new(current_time, self.history[idx - 1].value.clone()));
-      &mut (self.history[idx].value)
-    } else {
-      if idx + 1 < self.history.len() {
-        self.history.truncate(idx + 1);
-      }
-      if self.history.len() == 1 {
-        let latest_ticks = &self.history.front().unwrap().time.ticks;
-        if *latest_ticks != current_time.ticks {
-          panic!("Do not refer non-existent value!")
-        }
-      } else {
-        let prev_time = self.history[idx - 1].time.clone();
-        if prev_time.ticks != current_time.ticks {
-          let prev_value = self.history[idx - 1].value.clone();
-          self.history[idx].value = prev_value;
-        }
-      }
-      self.history[idx].time = current_time;
-      &mut (self.history[idx].value)
+    if self.begin_ticks > current_time.ticks {
+      panic!("Don't write into a value in the future!");
     }
+    self.last_modified_leaps = current_time.leaps;
+    let write_index = (current_time.ticks - self.begin_ticks) as usize;
+    let prev = {
+      let read_index = self.find_read_index(&clock, current_time.ticks).expect("[BUG] FIXME");
+      if read_index == write_index {
+        return &mut self.history[write_index];
+      }
+      self.history[read_index].clone()
+    };
+    if write_index < self.history.len() {
+      self.history.truncate(write_index + 1);
+      self.history[write_index] = prev.clone();
+      return &mut self.history[write_index];
+    }
+    if write_index < RECORDED_FRAMES {
+      self.history.resize(write_index + 1, prev);
+      return &mut self.history[write_index];
+    }
+    let remove_len = write_index + 1 - RECORDED_FRAMES;
+    if remove_len >= self.history.len() {
+      self.history.clear();
+      self.history.push_back(prev);
+      self.begin_ticks = current_time.ticks;
+      return &mut self.history[0];
+    }
+    for _ in 0..remove_len {
+      self.history.pop_front();
+    }
+    self.history.resize(RECORDED_FRAMES, prev);
+    self.begin_ticks = current_time.ticks - (RECORDED_FRAMES as u32) + 1;
+    &mut self.history[RECORDED_FRAMES - 1]
   }
 }

@@ -74,13 +74,13 @@ impl Clock {
     leap_intersection.push(ticks);
     current.clone()
   }
-  pub(crate) fn adjust_read_time(&self, value_time: SubjectiveTime) -> u32 {
+  pub(crate) fn adjust_read_time(&self, last_modified_leaps: u32, ticks_to_read: u32) -> u32 {
     let current = self.current.read().expect("Failed to lock Clock (write)");
     let leap_intersection = self.leap_intersection.read().expect("Failed to lock intersection");
-    if value_time.leaps == current.leaps {
-      value_time.ticks
+    if last_modified_leaps == current.leaps {
+      ticks_to_read
     } else {
-      std::cmp::min(leap_intersection[(value_time.leaps) as usize], value_time.ticks)
+      std::cmp::min(leap_intersection[(last_modified_leaps) as usize], ticks_to_read)
     }
   }
 }
