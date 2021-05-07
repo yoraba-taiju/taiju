@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::stage::prelude::*;
+use crate::chapter::prelude::*;
 use crate::donut::Clock;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
@@ -41,11 +41,11 @@ pub fn build() -> App {
     // Loading
     .add_system_set(
       SystemSet::on_enter(AppState::Loading)
-        .with_system(crate::stage::setup.system())
+        .with_system(crate::chapter::setup.system())
     )
     .add_system_set(
       SystemSet::on_update(AppState::Loading)
-        .with_system(crate::stage::check_setup.system())
+        .with_system(crate::chapter::check_setup.system())
     );
 
     // Game

@@ -4,7 +4,7 @@ use bevy::{
   },
   prelude::*,
 };
-use crate::stage::prelude::*;
+use crate::chapter::prelude::*;
 
 #[derive(Default)]
 pub struct UserInput {

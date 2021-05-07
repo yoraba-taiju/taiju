@@ -1,7 +1,7 @@
 use bevy::asset::LoadState;
 use bevy::prelude::*;
 
-use crate::stage::prelude::*;
+use crate::chapter::prelude::*;
 use crate::app::AppState;
 
 pub mod components;
@@ -13,7 +13,7 @@ pub struct StagePlugin;
 
 impl Plugin for StagePlugin {
   fn build(&self, app: &mut AppBuilder) {
-    use crate::stage::scenario::*;
+    use crate::chapter::scenario::*;
     app
       .init_asset_loader::<ScenarioLoader>()
       .add_asset::<Scenario>();

@@ -1,4 +1,4 @@
-use crate::stage::prelude::*;
+use crate::chapter::prelude::*;
 
 #[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
 pub struct Size {

@@ -1,7 +1,7 @@
 use std::ops::DerefMut;
 use std::ops::Deref;
 
-use crate::stage::prelude::*;
+use crate::chapter::prelude::*;
 use bevy::reflect::TypeUuid;
 
 pub mod loader;

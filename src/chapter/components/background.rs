@@ -1,4 +1,4 @@
-use crate::stage::prelude::*;
+use crate::chapter::prelude::*;
 
 pub enum BackgroundType {
   Stage01,

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::stage::prelude::*;
+use crate::chapter::prelude::*;
 use std::collections::HashMap;
 use bevy::asset::HandleId;
 

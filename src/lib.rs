@@ -2,4 +2,4 @@
 
 pub mod app;
 pub mod donut;
-pub mod stage;
+pub mod chapter;
