@@ -59,13 +59,13 @@ impl Clock {
     let state = self.state.read().expect("Failed to lock Clock (read)");
     state.current.ticks
   }
-  pub fn tick(&self) -> u32 {
+  pub fn tick(&self) -> SubjectiveTime {
     let mut state = self.state.write().expect("Failed to lock Clock (write)");
     state.current.ticks += 1;
     if (state.availabe_from + (RECORDED_FRAMES as u32)) <= state.current.ticks {
       state.availabe_from = state.current.ticks - (RECORDED_FRAMES as u32);
     }
-    state.current.ticks
+    state.current.clone()
   }
   fn adjust_intersection(leap_intersection: &mut Vec<u32>, leap_ticks: u32) {
     for branch in leap_intersection.iter_mut() {
