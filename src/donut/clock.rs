@@ -69,14 +69,12 @@ impl Clock {
   }
   fn adjust_intersection(leap_intersection: &mut Vec<u32>, leap_ticks: u32) {
     for branch in leap_intersection.iter_mut() {
-      if leap_ticks < *branch {
-        *branch = leap_ticks;
-      }
+      *branch = std::cmp::min(*branch, leap_ticks);
     }
   }
   pub(crate) fn leap(&self, ticks: u32) -> Option<SubjectiveTime> {
     let mut state = self.state.write().expect("Failed to lock Clock (write)");
-    if ticks < state.availabe_from || state.current.ticks <= ticks {
+    if ticks <= state.availabe_from || state.current.ticks <= ticks {
       return None;
     }
     state.current.leaps += 1;
