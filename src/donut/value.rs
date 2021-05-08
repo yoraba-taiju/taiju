@@ -80,6 +80,7 @@ impl <T: Clone> DerefMut for Value<T> {
     let prev = {
       let read_index = self.find_read_index(&clock, current_time.ticks).expect("[BUG] FIXME");
       if read_index == write_index {
+        self.history.truncate(write_index + 1);
         return &mut self.history[write_index];
       }
       self.history[read_index].clone()
