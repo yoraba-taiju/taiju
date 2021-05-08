@@ -51,14 +51,19 @@ impl Clock {
   pub fn make<T: Clone>(self: &Arc<Self>, value: T) -> Value<T> {
     Value::new(self, value)
   }
-  pub fn current_time(&self) -> SubjectiveTime {
-    let state = self.state.read().expect("Failed to lock Clock (read)");
-    state.current.clone()
-  }
+
+  // States
   pub fn is_inspected(&self) -> bool {
     let state = self.state.read().expect("Failed to lock Clock (read)");
     state.inspect_at.is_some()
   }
+
+  pub fn current_time(&self) -> SubjectiveTime {
+    let state = self.state.read().expect("Failed to lock Clock (read)");
+    state.current.clone()
+  }
+
+  // States to read
   pub fn time_to_read(&self) -> SubjectiveTime {
     let state = self.state.read().expect("Failed to lock Clock (read)");
     if let Some(ticks) = state.inspect_at {
@@ -78,17 +83,11 @@ impl Clock {
       state.current.ticks
     }
   }
+
+  // Operation
   pub fn inspect_at(&self, ticks: u32) {
     let mut state = self.state.write().expect("Failed to lock Clock (write)");
     state.inspect_at = Some(std::cmp::min(std::cmp::max(ticks, state.availabe_from), state.current.ticks));
-  }
-  pub fn tick(&self) -> SubjectiveTime {
-    let mut state = self.state.write().expect("Failed to lock Clock (write)");
-    state.current.ticks += 1;
-    if (state.availabe_from + (RECORDED_FRAMES as u32)) <= state.current.ticks {
-      state.availabe_from = state.current.ticks - (RECORDED_FRAMES as u32) + 1;
-    }
-    state.current.clone()
   }
   pub(crate) fn leap(&self) -> Option<SubjectiveTime> {
     let mut state = self.state.write().expect("Failed to lock Clock (write)");
@@ -96,9 +95,6 @@ impl Clock {
       return None;
     }
     let ticks = state.inspect_at.unwrap();
-    if ticks < state.availabe_from || state.current.ticks <= ticks {
-      return None;
-    }
     state.inspect_at = None;
     state.current.leaps += 1;
     state.current.ticks = ticks;
@@ -109,6 +105,16 @@ impl Clock {
     state.leap_intersection.push(ticks);
     Some(state.current.clone())
   }
+  pub fn tick(&self) -> SubjectiveTime {
+    let mut state = self.state.write().expect("Failed to lock Clock (write)");
+    state.current.ticks += 1;
+    if (state.availabe_from + (RECORDED_FRAMES as u32)) <= state.current.ticks {
+      state.availabe_from = state.current.ticks - (RECORDED_FRAMES as u32) + 1;
+    }
+    state.current.clone()
+  }
+
+  // used from value
   pub(crate) fn adjust_read_time(&self, last_modified_leaps: u32, ticks_to_read: u32) -> u32 {
     let state = self.state.read().expect("Failed to lock Clock (read)");
     if last_modified_leaps == state.current.leaps {
