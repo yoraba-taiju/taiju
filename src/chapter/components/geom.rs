@@ -59,7 +59,7 @@ pub fn handle_entity_vanishing(
   clock: Res<ClockRef>,
   mut query: Query<(Entity, &Value<Position>), (Without<Vanished>, Without<Witch>)>
 ) {
-  if(clock.is_inspected()) {
+  if clock.is_inspected() {
     return;
   }
   for (entity, pos) in query.iter_mut() {
