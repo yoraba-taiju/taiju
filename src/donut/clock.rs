@@ -63,7 +63,7 @@ impl Clock {
     let mut state = self.state.write().expect("Failed to lock Clock (write)");
     state.current.ticks += 1;
     if (state.availabe_from + (RECORDED_FRAMES as u32)) <= state.current.ticks {
-      state.availabe_from = state.current.ticks - (RECORDED_FRAMES as u32);
+      state.availabe_from = state.current.ticks - (RECORDED_FRAMES as u32) + 1;
     }
     state.current.clone()
   }
@@ -74,7 +74,7 @@ impl Clock {
   }
   pub(crate) fn leap(&self, ticks: u32) -> Option<SubjectiveTime> {
     let mut state = self.state.write().expect("Failed to lock Clock (write)");
-    if ticks <= state.availabe_from || state.current.ticks <= ticks {
+    if ticks < state.availabe_from || state.current.ticks <= ticks {
       return None;
     }
     state.current.leaps += 1;
