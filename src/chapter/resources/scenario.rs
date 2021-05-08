@@ -1,16 +1,11 @@
-use std::ops::DerefMut;
-use std::ops::Deref;
-
 use crate::chapter::prelude::*;
 use bevy::reflect::TypeUuid;
 
 pub mod loader;
 pub use loader::ScenarioLoader;
 
-use anyhow::{Result, Context};
-use bevy::asset::{Asset, HandleId};
-use crate::donut::SubjectiveTime;
-
+use anyhow::Result;
+use bevy::asset::HandleId;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Event {
   ChangeWitchSpeed(Motion),
@@ -62,7 +57,7 @@ impl ScenarioSever {
     let handle = asset_server.load::<Scenario, _>("scenario/stage01.ron");
     commands.insert_resource(ScenarioSever{
       scenario_handle: handle,
-      started: clock.current_ticks(),
+      started: clock.current_time().ticks,
       read_events: clock.make(0),
       spawned_objects: clock.make(0),
       scene_speed: clock.make(Default::default()),
@@ -81,9 +76,12 @@ impl ScenarioSever {
     enemy_server: Res<EnemyServer>,
     sora_query: Query<(Entity, &Value<Position>), With<Sora>>,
   ) {
+    if clock.is_inspected() {
+      return;
+    }
     let scenario = scenarios.get(&seq.scenario_handle).unwrap();
     let sora: (Entity, &Value<Position>) = sora_query.single().unwrap();
-    let current = clock.current_ticks() - seq.started.clone();
+    let current = clock.current_time().ticks - seq.started.clone();
     for i in (*seq.read_events)..scenario.events.len() {
       let (at, ev) = scenario.events[i].clone();
       if at > current {

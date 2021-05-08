@@ -34,7 +34,10 @@ impl Default for Motion {
   }
 }
 
-pub fn move_by_motion(_clock: Res<ClockRef>, mut query: Query<(&mut Value<Position>, &Motion)>) {
+pub fn move_by_motion(clock: Res<ClockRef>, mut query: Query<(&mut Value<Position>, &Motion)>) {
+  if clock.is_inspected() {
+    return;
+  }
   for (mut pos, motion) in query.iter_mut() {
     let pos: &mut Position = &mut pos;
     let motion: &Motion = &motion;
@@ -56,6 +59,9 @@ pub fn handle_entity_vanishing(
   clock: Res<ClockRef>,
   mut query: Query<(Entity, &Value<Position>), (Without<Vanished>, Without<Witch>)>
 ) {
+  if(clock.is_inspected()) {
+    return;
+  }
   for (entity, pos) in query.iter_mut() {
     let entity: Entity = entity;
     let pos: &Value<Position> = &pos;
@@ -100,7 +106,6 @@ pub fn move_by_angular_motion(_clock: Res<ClockRef>, mut query: Query<(&mut Valu
     let motion: &AngularMotion = &motion;
     match motion {
       &AngularMotion::Constant(delta) => {
-        use bevy::math::{Mat3, Mat4, Quat, Vec3};
         use std::ops::Mul;
         rot.quaternion = Quat::from_rotation_z(delta).mul(rot.quaternion).into();
       }

@@ -9,7 +9,7 @@ pub struct Spawned {
 impl Spawned {
   pub(crate) fn new(clock: &ClockRef) ->Self {
     Self {
-      at: clock.current_ticks(),
+      at: clock.current_time().ticks,
     }
   }
 }
@@ -22,7 +22,7 @@ pub struct Vanished {
 impl Vanished {
   pub(crate) fn new(clock: &ClockRef) ->Self {
     Self {
-      at: clock.current_ticks(),
+      at: clock.current_time().ticks,
     }
   }
 }
@@ -34,8 +34,8 @@ pub fn handle_lifetime(
   mut s_query: Query<(Entity, &mut Spawned)>,
   mut v_query: Query<(Entity, &mut Vanished)>,
 ) {
-  let current = clock.current_ticks();
-  if user_input.clock_direction <= 0 {
+  let current = clock.ticks_to_read();
+  if clock.is_inspected() {
     for (entity, mut spawned) in s_query.iter_mut() {
       let entity: Entity = entity;
       let spawned: &mut Spawned = &mut spawned;
@@ -47,10 +47,10 @@ pub fn handle_lifetime(
     for (entity, mut vanished) in v_query.iter_mut() {
       let entity: Entity = entity;
       let vanished: &mut Vanished = &mut vanished;
-      if &vanished.at + (RECORDED_FRAMES as u32) < current {
-        commands.entity(entity).despawn_recursive();
-      }else if current < vanished.at {
+      if current < vanished.at {
         commands.entity(entity).remove::<Vanished>();
+      } else if &vanished.at + (RECORDED_FRAMES as u32) < current {
+        commands.entity(entity).despawn_recursive();
       }
     }
   }

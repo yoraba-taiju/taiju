@@ -36,7 +36,10 @@ impl Sora {
       })
     ;
   }
-  pub fn update(input: Res<UserInput>, mut query: Query<(&mut Value<Position>), With<Sora>>) {
+  pub fn update(clock: Res<ClockRef>, input: Res<UserInput>, mut query: Query<&mut Value<Position>, With<Sora>>) {
+    if clock.is_inspected() {
+      return;
+    }
     let pos: &mut Value<Position> = &mut (query.single_mut().unwrap());
     pos.apply(&Motion::Constant(input.x * 500.0 / 60.0, input.y * 500.0 / 60.0));
   }

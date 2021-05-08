@@ -6,11 +6,15 @@ pub fn control_clock(
 )
 {
   if input.clock_direction < 0 {
-    // TODO: フレームでリミッターをかける
-    if clock.current_ticks() > 0 {
-      clock.leap(clock.current_ticks() - 1);
+    let ticks = clock.ticks_to_read();
+    if ticks > 0 {
+      clock.inspect_at(ticks - 1);
     }
   }else{
-    clock.tick();
+    if clock.is_inspected() {
+      clock.leap();
+    } else {
+      clock.tick();
+    }
   }
 }

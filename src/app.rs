@@ -70,13 +70,13 @@ pub fn build() -> App {
         .after(UpdateStates)
         .with_system(copy_pos_to_transform.system())
         .with_system(handle_entity_vanishing.system())
+        .with_system(ScenarioSever::update.system())
       )
       .add_system_set(SystemSet::on_update(AppState::InChapter)
         .label(EndFrame)
         .after(RenderFrame)
         .with_system(control_clock.system())
         .with_system(handle_lifetime.system())
-        .with_system(ScenarioSever::update.system())
       );
   }
   builder.app

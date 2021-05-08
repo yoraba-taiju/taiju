@@ -10,6 +10,7 @@ pub struct Value<T: Clone> {
   last_modified_leaps: u32,
   begin_ticks: u32,
   history: VecDeque<T>,
+  tmp: T,
 }
 
 impl <T: Debug + Clone> Debug for Value<T> {
@@ -35,6 +36,7 @@ impl <T: Clone> Value<T> {
       last_modified_leaps: current_time.leaps,
       begin_ticks: current_time.ticks,
       history: VecDeque::new(),
+      tmp: initial.clone(),
     };
     s.history.reserve(RECORDED_FRAMES);
     s.history.push_back(initial);
@@ -63,7 +65,7 @@ impl <T: Clone> Deref for Value<T> {
 
   fn deref(&self) -> &Self::Target {
     let clock = self.clock.upgrade().unwrap();
-    let idx = self.find_read_index(&clock, clock.current_ticks()).expect("Don't read a value in the future!");
+    let idx = self.find_read_index(&clock, clock.ticks_to_read()).expect("Don't read a value in the future!");
     &self.history[idx]
   }
 }
@@ -71,6 +73,9 @@ impl <T: Clone> Deref for Value<T> {
 impl <T: Clone> DerefMut for Value<T> {
   fn deref_mut(&mut self) -> &mut Self::Target {
     let clock = self.clock.upgrade().expect("Clock was missing.");
+    if clock.is_inspected() {
+      return &mut self.tmp;
+    }
     let current_time = clock.current_time();
     if self.begin_ticks > current_time.ticks {
       panic!("Don't write into a value in the future!");

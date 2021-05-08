@@ -4,7 +4,6 @@ use bevy::{
   },
   prelude::*,
 };
-use crate::chapter::prelude::*;
 
 #[derive(Default)]
 pub struct UserInput {
@@ -31,7 +30,7 @@ pub fn handle_input_events(
       GamepadEvent(gamepad, GamepadEventType::ButtonChanged(button_type, value)) => {
         println!("{:?} of {:?} is changed to {}", button_type, gamepad, value);
       }
-      GamepadEvent(gamepad, GamepadEventType::AxisChanged(axis_type, value)) => {
+      GamepadEvent(_gamepad, GamepadEventType::AxisChanged(axis_type, value)) => {
         match axis_type {
           &GamepadAxisType::DPadX => {
             input.pad_x = *value;

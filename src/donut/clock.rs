@@ -1,16 +1,16 @@
-use std::sync::{Arc, RwLock};
 use super::*;
+use std::sync::{Arc, RwLock};
 use std::fmt::{Debug, Formatter};
 
 pub type ClockRef = Arc<Clock>;
 pub struct Clock {
-  state: RwLock<ClockState>
+  state: RwLock<Inner>
 }
-struct ClockState {
+struct Inner {
   current: SubjectiveTime,
+  inspect_at: Option<u32>,
   leap_intersection: Vec<u32>,
   availabe_from: u32,
-  inspect_at: Option<u32>,
 }
 
 impl Debug for Clock {
@@ -37,14 +37,14 @@ impl Debug for Clock {
 impl Clock {
   pub fn new() -> ClockRef {
     Arc::new(Clock {
-      state: RwLock::new(ClockState{
+      state: RwLock::new(Inner{
         current: SubjectiveTime{
           leaps: 0,
           ticks: 0,
         },
+        inspect_at: None,
         leap_intersection: Vec::new(),
         availabe_from: 0,
-        inspect_at: None,
       })
     })
   }
@@ -55,9 +55,32 @@ impl Clock {
     let state = self.state.read().expect("Failed to lock Clock (read)");
     state.current.clone()
   }
-  pub fn current_ticks(&self) -> u32 {
+  pub fn is_inspected(&self) -> bool {
     let state = self.state.read().expect("Failed to lock Clock (read)");
-    state.current.ticks
+    state.inspect_at.is_some()
+  }
+  pub fn time_to_read(&self) -> SubjectiveTime {
+    let state = self.state.read().expect("Failed to lock Clock (read)");
+    if let Some(ticks) = state.inspect_at {
+      SubjectiveTime{
+        leaps: state.current.ticks,
+        ticks,
+      }
+    } else {
+      state.current.clone()
+    }
+  }
+  pub fn ticks_to_read(&self) -> u32 {
+    let state = self.state.read().expect("Failed to lock Clock (read)");
+    if let Some(ticks) = state.inspect_at {
+      ticks
+    } else {
+      state.current.ticks
+    }
+  }
+  pub fn inspect_at(&self, ticks: u32) {
+    let mut state = self.state.write().expect("Failed to lock Clock (write)");
+    state.inspect_at = Some(std::cmp::min(std::cmp::max(ticks, state.availabe_from), state.current.ticks));
   }
   pub fn tick(&self) -> SubjectiveTime {
     let mut state = self.state.write().expect("Failed to lock Clock (write)");
@@ -67,19 +90,22 @@ impl Clock {
     }
     state.current.clone()
   }
-  fn adjust_intersection(leap_intersection: &mut Vec<u32>, leap_ticks: u32) {
-    for branch in leap_intersection.iter_mut() {
-      *branch = std::cmp::min(*branch, leap_ticks);
-    }
-  }
-  pub(crate) fn leap(&self, ticks: u32) -> Option<SubjectiveTime> {
+  pub(crate) fn leap(&self) -> Option<SubjectiveTime> {
     let mut state = self.state.write().expect("Failed to lock Clock (write)");
+    if state.inspect_at.is_none() {
+      return None;
+    }
+    let ticks = state.inspect_at.unwrap();
     if ticks < state.availabe_from || state.current.ticks <= ticks {
       return None;
     }
+    state.inspect_at = None;
     state.current.leaps += 1;
     state.current.ticks = ticks;
-    Self::adjust_intersection(&mut state.leap_intersection, ticks);
+    // adjust_intersection
+    for branch in state.leap_intersection.iter_mut() {
+      *branch = std::cmp::min(*branch, ticks);
+    }
     state.leap_intersection.push(ticks);
     Some(state.current.clone())
   }
