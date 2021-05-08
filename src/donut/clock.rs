@@ -4,15 +4,20 @@ use std::fmt::{Debug, Formatter};
 
 pub type ClockRef = Arc<Clock>;
 pub struct Clock {
-  current: RwLock<SubjectiveTime>,
-  leap_intersection: RwLock<Vec<u32>>,
+  state: RwLock<ClockState>
+}
+struct ClockState {
+  current: SubjectiveTime,
+  leap_intersection: Vec<u32>,
+  availabe_from: u32,
+  inspect_at: Option<u32>,
 }
 
 impl Debug for Clock {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    let current = self.current.read().unwrap();
+    let state = self.state.read().unwrap();
     let leap_intersections_str = {
-      let inner = self.leap_intersection.read().unwrap()
+      let inner = state.leap_intersection
         .iter()
         .enumerate()
         .map(|(i,t)| format!("(leap={}, at={})", i, t))
@@ -20,7 +25,7 @@ impl Debug for Clock {
         .join(", ");
       format!("[{}]", inner)
     };
-    let current_str = format!("({}, {})", current.leaps, current.ticks);
+    let current_str = format!("({}, {})", state.current.leaps, state.current.ticks);
     f.write_str(
       format!("Clock {{ current: {}, intersections: {} }}",
               current_str,
@@ -31,29 +36,36 @@ impl Debug for Clock {
 
 impl Clock {
   pub fn new() -> ClockRef {
-    Arc::new(Self {
-      current: RwLock::new(SubjectiveTime{
-        leaps: 0,
-        ticks: 0,
-      }),
-      leap_intersection: RwLock::new(Vec::new()),
+    Arc::new(Clock {
+      state: RwLock::new(ClockState{
+        current: SubjectiveTime{
+          leaps: 0,
+          ticks: 0,
+        },
+        leap_intersection: Vec::new(),
+        availabe_from: 0,
+        inspect_at: None,
+      })
     })
   }
   pub fn make<T: Clone>(self: &Arc<Self>, value: T) -> Value<T> {
     Value::new(self, value)
   }
   pub fn current_time(&self) -> SubjectiveTime {
-    let t = self.current.read().expect("Failed to lock Clock (read)");
-    t.clone()
+    let state = self.state.read().expect("Failed to lock Clock (read)");
+    state.current.clone()
   }
   pub fn current_ticks(&self) -> u32 {
-    let t = self.current.read().expect("Failed to lock Clock (read)");
-    t.ticks
+    let state = self.state.read().expect("Failed to lock Clock (read)");
+    state.current.ticks
   }
   pub fn tick(&self) -> u32 {
-    let mut t = self.current.write().expect("Failed to lock Clock (write)");
-    t.ticks += 1;
-    t.ticks
+    let mut state = self.state.write().expect("Failed to lock Clock (write)");
+    state.current.ticks += 1;
+    if (state.availabe_from + (RECORDED_FRAMES as u32)) <= state.current.ticks {
+      state.availabe_from = state.current.ticks - (RECORDED_FRAMES as u32);
+    }
+    state.current.ticks
   }
   fn adjust_intersection(leap_intersection: &mut Vec<u32>, leap_ticks: u32) {
     for branch in leap_intersection.iter_mut() {
@@ -62,25 +74,23 @@ impl Clock {
       }
     }
   }
-  pub(crate) fn leap(&self, ticks: u32) -> SubjectiveTime {
-    let mut current = self.current.write().expect("Failed to lock Clock (write)");
-    if ticks == current.ticks {
-      return current.clone();
+  pub(crate) fn leap(&self, ticks: u32) -> Option<SubjectiveTime> {
+    let mut state = self.state.write().expect("Failed to lock Clock (write)");
+    if ticks < state.availabe_from || state.current.ticks <= ticks {
+      return None;
     }
-    let mut leap_intersection = self.leap_intersection.write().expect("Failed to lock intersection");
-    current.leaps += 1;
-    current.ticks = ticks;
-    Self::adjust_intersection(&mut leap_intersection, ticks);
-    leap_intersection.push(ticks);
-    current.clone()
+    state.current.leaps += 1;
+    state.current.ticks = ticks;
+    Self::adjust_intersection(&mut state.leap_intersection, ticks);
+    state.leap_intersection.push(ticks);
+    Some(state.current.clone())
   }
   pub(crate) fn adjust_read_time(&self, last_modified_leaps: u32, ticks_to_read: u32) -> u32 {
-    let current = self.current.read().expect("Failed to lock Clock (write)");
-    let leap_intersection = self.leap_intersection.read().expect("Failed to lock intersection");
-    if last_modified_leaps == current.leaps {
+    let state = self.state.read().expect("Failed to lock Clock (read)");
+    if last_modified_leaps == state.current.leaps {
       ticks_to_read
     } else {
-      std::cmp::min(leap_intersection[(last_modified_leaps) as usize], ticks_to_read)
+      std::cmp::min(state.leap_intersection[(last_modified_leaps) as usize], ticks_to_read)
     }
   }
 }
