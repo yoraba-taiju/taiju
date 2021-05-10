@@ -11,6 +11,18 @@ pub enum Event {
   ChangeWitchSpeed(Motion),
   SpawnEnemy(EnemyDescription)
 }
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Condition {
+  Always,
+  WhenFlagSet(String),
+  WhenFlagNotSet(String),
+}
+
+impl Default for Condition {
+  fn default() -> Self {
+    Condition::Always
+  }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Object {
