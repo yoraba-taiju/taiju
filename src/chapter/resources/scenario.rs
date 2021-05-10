@@ -34,7 +34,7 @@ pub struct Object {
 #[derive(Default, Debug, Clone, TypeUuid, Serialize, Deserialize)]
 #[uuid = "779ba602-ab1a-11eb-bcbc-0242ac130002"]
 pub struct Scenario {
-  pub events: Vec<(u32, Event)>,
+  pub events: Vec<(u32, Vec<Event>)>,
   pub objects: Vec<Object>,
 }
 
@@ -95,15 +95,17 @@ impl ScenarioSever {
     let sora: (Entity, &Value<Position>) = sora_query.single().unwrap();
     let current = clock.current_time().ticks - seq.started.clone();
     for i in (*seq.read_events)..scenario.events.len() {
-      let (at, ev) = scenario.events[i].clone();
-      if at > current {
+      let (at, events) = &scenario.events[i];
+      if *at > current {
         break;
       }
       *seq.read_events += 1;
-      match ev {
-        Event::ChangeWitchSpeed(motion) => { *seq.scene_speed = motion; }
-        Event::SpawnEnemy(desc) => {
-          enemy_server.spawn_enemy(&desc, &clock, &mut commands);
+      for ev in events {
+        match ev.clone() {
+          Event::ChangeWitchSpeed(motion) => { *seq.scene_speed = motion; }
+          Event::SpawnEnemy(desc) => {
+            enemy_server.spawn_enemy(&desc, &clock, &mut commands);
+          }
         }
       }
     }
