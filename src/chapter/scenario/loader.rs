@@ -1,4 +1,4 @@
-use crate::chapter::prelude::*;
+use super::Scenario;
 use bevy::asset::{AssetLoader, LoadContext, LoadedAsset};
 
 use anyhow::Result;

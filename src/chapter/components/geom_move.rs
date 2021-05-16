@@ -1,48 +1,9 @@
-use crate::chapter::prelude::*;
+use crate::prelude::*;
+use super::geom_pos::*;
 
-#[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
-pub struct Size {
-  pub w: f32,
-  pub h: f32,
-}
-
-#[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
-pub struct Position {
-  pub x: f32,
-  pub y: f32,
-}
-
-impl Position {
-  pub fn apply(&mut self, motion: &Motion) {
-    match motion {
-      &Motion::Constant(x, y) => {
-        self.x += x;
-        self.y += y;
-      }
-    }
-  }
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy)]
 pub enum Motion {
   Constant(f32, f32),
-}
-
-impl Default for Motion {
-  fn default() -> Self {
-    Motion::Constant(0.0, 0.0)
-  }
-}
-
-pub fn move_by_motion(clock: Res<ClockRef>, mut query: Query<(&mut Value<Position>, &Motion)>) {
-  if clock.is_inspected() {
-    return;
-  }
-  for (mut pos, motion) in query.iter_mut() {
-    let pos: &mut Position = &mut pos;
-    let motion: &Motion = &motion;
-    pos.apply(motion);
-  }
 }
 
 pub fn copy_pos_to_transform(mut query: Query<(&Value<Position>, &mut Transform)>) {

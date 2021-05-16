@@ -1,9 +1,11 @@
 Scenario(
-  events:[
-    (0, [
-      ChangeWitchSpeed(Constant(32.0, 0))
-    ]),
-    (60, [
+  course: Course(
+    changes: {
+      0: Constant(32.0, 0),
+    }
+  ),
+  events: {
+    60: [
       SpawnEnemy(EnemyDescription(
         body: Enemy01,
         position: Position (
@@ -11,8 +13,7 @@ Scenario(
           y: 0,
         ),
         motion: Some(Constant(-2.0, 0)),
-      ))
-    ]),
-  ],
-  objects:[]
+      )),
+    ],
+  }.
 )

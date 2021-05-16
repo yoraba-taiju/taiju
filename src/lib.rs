@@ -3,3 +3,4 @@
 pub mod app;
 pub mod donut;
 pub mod chapter;
+pub mod prelude;

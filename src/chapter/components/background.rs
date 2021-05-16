@@ -1,13 +1,14 @@
-use crate::chapter::prelude::*;
+use crate::prelude::*;
 
-pub enum BackgroundType {
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq, Serialize, Deserialize)]
+pub enum BackgroundKind {
   Stage01,
 }
 
-impl BackgroundType {
+impl BackgroundKind {
   fn spawn(&self, commands: &mut Commands) {
     match self {
-      &BackgroundType::Stage01 => {
+      &BackgroundKind::Stage01 => {
       }
     }
   }

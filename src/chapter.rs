@@ -1,12 +1,14 @@
 use bevy::asset::LoadState;
 use bevy::prelude::*;
 
-use crate::chapter::prelude::*;
 use crate::app::AppState;
 
+pub mod scenario;
 pub mod components;
 pub mod resources;
-pub mod prelude;
+pub mod system;
+
+use crate::prelude::*;
 
 #[derive(Default)]
 pub struct StagePlugin;

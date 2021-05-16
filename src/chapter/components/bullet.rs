@@ -1,12 +1,10 @@
-use crate::chapter::prelude::*;
 use std::collections::HashMap;
 use bevy::asset::HandleId;
+use crate::prelude::*;
+pub struct Bullet;
 
-pub struct Bullet {
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Ord, PartialOrd, Eq, PartialEq, Hash)]
-pub enum BulletBody {
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
+pub enum BulletKind {
   BlueSmall,
   RedSmall,
   BlueNeedle,
@@ -15,7 +13,7 @@ pub enum BulletBody {
 
 #[derive(Default)]
 pub struct BulletServer {
-  pub sprites: HashMap<BulletBody, SpriteBundle>,
+  pub sprites: HashMap<BulletKind, SpriteBundle>,
 }
 
 impl BulletServer {
@@ -29,7 +27,7 @@ impl BulletServer {
     { // BlueSmall
       let texture = asset_server.load::<Texture, _>("sprites/bullets/blue_small.png");
       let color_material = color_materials.add(texture.into());
-      s.sprites.insert(BulletBody::BlueSmall, SpriteBundle {
+      s.sprites.insert(BulletKind::BlueSmall, SpriteBundle {
         material: color_material,
         ..Default::default()
       });
@@ -37,7 +35,7 @@ impl BulletServer {
     { // RedSmall
       let texture = asset_server.load::<Texture, _>("sprites/bullets/red_small.png");
       let color_material = color_materials.add(texture.into());
-      s.sprites.insert(BulletBody::RedSmall, SpriteBundle {
+      s.sprites.insert(BulletKind::RedSmall, SpriteBundle {
         material: color_material,
         ..Default::default()
       });
@@ -45,7 +43,7 @@ impl BulletServer {
     { // BlueNeedle
       let texture = asset_server.load::<Texture, _>("sprites/bullets/blue_needle.png");
       let color_material = color_materials.add(texture.into());
-      s.sprites.insert(BulletBody::BlueNeedle, SpriteBundle {
+      s.sprites.insert(BulletKind::BlueNeedle, SpriteBundle {
         material: color_material,
         ..Default::default()
       });
@@ -53,7 +51,7 @@ impl BulletServer {
     { // RedNeedle
       let texture = asset_server.load::<Texture, _>("sprites/bullets/red_needle.png");
       let color_material = color_materials.add(texture.into());
-      s.sprites.insert(BulletBody::RedNeedle, SpriteBundle {
+      s.sprites.insert(BulletKind::RedNeedle, SpriteBundle {
         material: color_material,
         ..Default::default()
       });

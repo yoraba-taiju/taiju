@@ -1,29 +1,20 @@
-use bevy::prelude::*;
-use crate::chapter::prelude::*;
 use std::collections::HashMap;
+use bevy::prelude::*;
 use bevy::asset::HandleId;
+use crate::chapter::scenario::EnemyDescription;
+use crate::donut::ClockRef;
+use super::lifecycles::Spawned;
 
-pub struct Enemy {
+pub struct Enemy;
 
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Ord, PartialOrd, Eq, PartialEq, Hash)]
-pub enum EnemyBody {
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq, Serialize, Deserialize)]
+pub enum EnemyKind {
   Enemy01,
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct EnemyDescription {
-  pub body: EnemyBody,
-  pub position: Position,
-  pub motion: Option<Motion>,
-  pub rotation: Option<f32>,
-  pub angular_motion: Option<AngularMotion>,
 }
 
 #[derive(Default)]
 pub struct EnemyServer {
-  pub sprites: HashMap<EnemyBody, SpriteBundle>,
+  pub sprites: HashMap<EnemyKind, SpriteBundle>,
 }
 
 impl EnemyServer {
@@ -37,7 +28,7 @@ impl EnemyServer {
     { // Enemy 01
       let texture = asset_server.load::<Texture, _>("sprites/bullets/blue_small.png");
       let color_material = color_materials.add(texture.into());
-      s.sprites.insert(EnemyBody::Enemy01, SpriteBundle {
+      s.sprites.insert(EnemyKind::Enemy01, SpriteBundle {
         material: color_material,
         ..Default::default()
       });
@@ -59,25 +50,19 @@ impl EnemyServer {
     commands: &mut Commands,
   ) {
     let mut c = commands.spawn();
-    c.insert(Enemy{});
+    c.insert(Enemy);
     c.insert(Spawned::new(&clock));
-    match desc.body {
-      EnemyBody::Enemy01 => {
-        let mut sprite = self.sprites[&EnemyBody::Enemy01].clone();
+    match desc.enemy {
+      EnemyKind::Enemy01 => {
+        let mut sprite = self.sprites[&EnemyKind::Enemy01].clone();
         sprite.transform.translation.x = desc.position.x;
         sprite.transform.translation.y = desc.position.y;
         c.insert_bundle(sprite);
       }
     };
     c.insert(clock.make(desc.position));
-    if let Some(motion) = desc.motion {
-      c.insert(motion);
-    }
-    if desc.rotation.is_some() || desc.angular_motion.is_some() {
-      c.insert(clock.make(Rotation {
-        quaternion: Quat::from_rotation_z(desc.rotation.unwrap_or_default()),
-      }));
-      c.insert(desc.angular_motion.unwrap_or_default());
+    match desc.attack {
+      // TODO
     }
   }
 }

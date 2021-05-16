@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use crate::chapter::prelude::*;
 use crate::donut::Clock;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
@@ -31,9 +30,9 @@ pub fn build() -> App {
 
   // Define Our Resources
   builder
-    .add_plugin(StagePlugin)
+    .add_plugin(crate::chapter::StagePlugin)
     .insert_resource(Clock::new())
-    .insert_resource(UserInput::default());
+    .insert_resource(crate::chapter::resources::UserInput::default());
 
   {
     // Loading Scene
