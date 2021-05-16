@@ -57,6 +57,10 @@ pub enum Condition {
   WhenFlagNotSet(String),
 }
 
+/******************************************************************************
+ ** Scenario
+ ******************************************************************************/
+
 #[derive(Default, Debug, Clone, TypeUuid, Serialize, Deserialize)]
 #[uuid = "779ba602-ab1a-11eb-bcbc-0242ac130002"]
 pub struct Scenario {
