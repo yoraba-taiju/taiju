@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-use bevy::asset::HandleId;
 use crate::prelude::*;
 pub struct Bullet;
 
