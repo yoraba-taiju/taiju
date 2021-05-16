@@ -4,3 +4,4 @@ pub mod app;
 pub mod donut;
 pub mod chapter;
 pub mod prelude;
+pub mod bevy_extention;

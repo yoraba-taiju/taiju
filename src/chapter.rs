@@ -1,26 +1,13 @@
-use bevy::asset::LoadState;
 use bevy::prelude::*;
-
+use bevy::asset::LoadState;
 use crate::app::AppState;
+use crate::prelude::*;
 
 pub mod components;
 pub mod states;
+pub mod resources;
 pub mod system;
 pub mod scenario;
-
-use crate::prelude::*;
-
-#[derive(Default)]
-pub struct StagePlugin;
-
-impl Plugin for StagePlugin {
-  fn build(&self, app: &mut AppBuilder) {
-    use crate::chapter::scenario::*;
-    app
-      .init_asset_loader::<ScenarioLoader>()
-      .add_asset::<Scenario>();
-  }
-}
 
 pub fn setup(
   mut commands: Commands,

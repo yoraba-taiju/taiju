@@ -1,6 +1,5 @@
 use std::collections::HashMap;
-use bevy::prelude::*;
-use serde::{Serialize, Deserialize};
+use crate::prelude::*;
 use bevy::asset::HandleId;
 use crate::chapter::scenario::EnemyDescription;
 
@@ -18,7 +17,7 @@ impl EnemyServer {
     }
     handles
   }
-  pub fn spawn_enemy(
+  pub fn spawn(
     &self,
     desc: &EnemyDescription,
     clock: &Res<ClockRef>,

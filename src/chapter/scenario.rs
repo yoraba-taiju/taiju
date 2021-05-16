@@ -1,19 +1,9 @@
 use std::collections::HashMap;
+use crate::prelude::*;
 use anyhow::Result;
-use serde::{Serialize, Deserialize};
-use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::asset::HandleId;
 
-use crate::chapter::components::{
-  geometry::*,
-  enemy::{EnemyKind, EnemyServer},
-  enemy_attack::EnemyAttackKind,
-  scape::ScapeKind,
-};
-
-pub mod loader;
-pub use loader::ScenarioLoader;
 pub mod server;
 pub use server::*;
 

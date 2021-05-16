@@ -29,12 +29,10 @@ pub fn build() -> App {
 
   // Define Our States
   builder
-    .add_plugin(crate::chapter::StagePlugin)
-    .insert_resource(Clock::new())
+    .add_plugin(crate::bevy_extention::TaijuPlugin)
     .insert_resource(UserInput::default());
 
-  {
-    // Loading Scene
+  { // Loading Scene
     builder
       .add_state(AppState::Loading)
       // Loading
@@ -45,11 +43,14 @@ pub fn build() -> App {
       .add_system_set(
         SystemSet::on_update(AppState::Loading)
           .with_system(crate::chapter::check_setup.system())
+      )
+      .add_system_set(
+        SystemSet::on_exit(AppState::Loading)
+          .with_system(crate::chapter::exit.system())
       );
   }
 
-  {
-    // Main Game Stage
+  { // Main Game Stage
     // https://github.com/bevyengine/bevy/blob/38feddb87850424df3a0b08bae8dc32c57004798/examples/ecs/system_sets.rs
     use ChapterSystemLabel::*;
     builder

@@ -1,8 +1,8 @@
-use super::Scenario;
 use bevy::asset::{AssetLoader, LoadContext, LoadedAsset};
-
-use anyhow::Result;
 use bevy::utils::BoxedFuture;
+use anyhow::Result;
+
+use crate::chapter::scenario::Scenario;
 
 #[derive(Default)]
 pub struct ScenarioLoader;
