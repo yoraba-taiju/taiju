@@ -3,10 +3,10 @@ use bevy::prelude::*;
 
 use crate::app::AppState;
 
-pub mod scenario;
 pub mod components;
-pub mod resources;
+pub mod states;
 pub mod system;
+pub mod scenario;
 
 use crate::prelude::*;
 

@@ -1,4 +1,4 @@
-use super::geom_pos::*;
+use super::geometry::*;
 use serde::{Serialize, Deserialize};
 #[derive(Debug)]
 pub struct Scape {

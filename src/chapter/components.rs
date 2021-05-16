@@ -1,8 +1,7 @@
 // just include.
-pub mod lifecycles;
+pub mod lifecycle;
 
-pub mod geom_pos;
-pub mod geom_move;
+pub mod geometry;
 
 pub mod witches;
 

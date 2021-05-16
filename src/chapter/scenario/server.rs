@@ -35,6 +35,9 @@ impl ScenarioSever {
     }
     let scenario = scenarios.get(&seq.scenario_handle).unwrap();
     let current = *seq.scene_time;
+    if let Some(velocity) = scenario.course.speed_changes.get(&current) {
+
+    }
     if let Some(events) = scenario.events.get(&current) {
       for ev in events.iter() {
         match ev.clone() {

@@ -1,5 +1,4 @@
-use bevy::prelude::*;
-use crate::donut::Clock;
+use crate::prelude::*;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum AppState {
@@ -28,11 +27,11 @@ pub fn build() -> App {
     .add_plugins(DefaultPlugins)
     .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.9)));
 
-  // Define Our Resources
+  // Define Our States
   builder
     .add_plugin(crate::chapter::StagePlugin)
     .insert_resource(Clock::new())
-    .insert_resource(crate::chapter::resources::UserInput::default());
+    .insert_resource(UserInput::default());
 
   {
     // Loading Scene

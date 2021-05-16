@@ -1,5 +1,5 @@
-// just include.
-pub mod clock;
-pub mod user_input;
+mod bullet_server;
+pub use bullet_server::*;
 
-pub use user_input::UserInput;
+mod enemy_server;
+pub use enemy_server::*;

@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use crate::prelude::*;
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct Size {
@@ -46,7 +46,7 @@ impl Velocity {
 }
 
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct Area {
   pub position: Position,
   pub size: Size,
@@ -57,6 +57,19 @@ impl Area {
     Self {
       position: Position::new(x, y),
       size: Size::new(w, h),
+    }
+  }
+}
+
+#[derive(Default, Debug, Clone, Copy)]
+pub struct Rotation {
+  pub quaternion: Quat,
+}
+
+impl Rotation {
+  fn new(z_angle: f32) -> Self {
+    Self {
+      quaternion: Quat::from_rotation_z(z_angle),
     }
   }
 }

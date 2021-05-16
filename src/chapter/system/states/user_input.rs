@@ -5,16 +5,9 @@ use bevy::{
   prelude::*,
 };
 
-#[derive(Default)]
-pub struct UserInput {
-  pub pad_x: f32,
-  pub pad_y: f32,
-  pub x: f32,
-  pub y: f32,
-  pub clock_direction: i8,
-}
+use crate::chapter::states::UserInput;
 
-pub fn handle_input_events(
+pub fn update(
   mut input: ResMut<UserInput>,
   keyboard_input: Res<Input<KeyCode>>,
   mut gamepad_event: EventReader<GamepadEvent>,

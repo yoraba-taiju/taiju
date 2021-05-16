@@ -6,7 +6,7 @@ use bevy::reflect::TypeUuid;
 use bevy::asset::HandleId;
 
 use crate::chapter::components::{
-  geom_pos::*,
+  geometry::*,
   enemy::{EnemyKind, EnemyServer},
   enemy_attack::EnemyAttackKind,
   scape::ScapeKind,

@@ -1,8 +1,8 @@
 use bevy::prelude::*;
-use crate::chapter::resources::user_input::UserInput;
+use crate::chapter::states::UserInput;
 use crate::donut::ClockRef;
 
-pub fn control_clock(
+pub fn update(
   input: Res<UserInput>,
   clock: Res<ClockRef>,
 )
