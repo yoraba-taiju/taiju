@@ -1,22 +1,23 @@
 use std::collections::HashMap;
 use crate::prelude::*;
-use bevy::asset::HandleId;
 use crate::chapter::scenario::EnemyDescription;
 
-#[derive(Default)]
 pub struct EnemyServer {
   pub sprites: HashMap<EnemyKind, SpriteBundle>,
 }
 
 impl EnemyServer {
-  pub fn get_asset_handles(&self) -> Vec<HandleId> {
-    let mut handles: Vec<HandleId> = Vec::new();
-    for (_, it) in &self.sprites {
-      handles.push(it.material.id);
-      handles.push(it.mesh.id);
-    }
-    handles
+  pub fn from_loader(loader: &mut Loader) -> Self {
+    let mut s = Self{
+      sprites: Default::default(),
+    };
+    let mut load = |enemy_kind: EnemyKind, path: &str| {
+      s.sprites.insert(enemy_kind, loader.load_sprite(path));
+    };
+    load(EnemyKind::Enemy01, "sprites/bullets/blue_small.png");
+    s
   }
+
   pub fn spawn(
     &self,
     desc: &EnemyDescription,
@@ -34,7 +35,7 @@ impl EnemyServer {
         c.insert_bundle(sprite);
       }
     };
-    c.insert(clock.make(desc.position));
+    c.insert(clock.make(desc.position.clone()));
     match desc.attack {
       // TODO
     }

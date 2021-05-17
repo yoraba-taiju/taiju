@@ -1,6 +1,3 @@
-use bevy::prelude::*;
-use bevy::asset::LoadState;
-use crate::app::AppState;
 use crate::prelude::*;
 
 pub mod components;
@@ -9,42 +6,35 @@ pub mod resources;
 pub mod system;
 pub mod scenario;
 
-pub fn setup(
+pub fn on_enter(
   mut commands: Commands,
-  clock: Res<ClockRef>,
-  mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-  mut color_materials: ResMut<Assets<ColorMaterial>>,
-  asset_server: Res<AssetServer>,
+  scenario_server: Res<ScenarioSever>,
+  scenarios: Res<Assets<Scenario>>,
 ) {
-  // Resources to load
-  ScenarioSever::spawn(&mut commands, &clock, &asset_server);
-  EnemyServer::spawn(&mut commands, &asset_server, &mut color_materials, &mut texture_atlases);
-  BulletServer::spawn(&mut commands, &asset_server, &mut color_materials, &mut texture_atlases);
+  // Init clock
+  let clock: ClockRef = Clock::new();
+  commands.insert_resource(clock.clone());
 
-  // witches
-  Sora::spawn(&mut commands, &clock, &asset_server, &mut color_materials);
+  // Span Scenario Reader
+  let scenario = scenario_server.get_scenario(&scenarios);
+  commands.insert_resource(ScenarioReader::new(clock.clone(), scenario));
 
   // cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
   commands.spawn_bundle(UiCameraBundle::default());
 }
 
-pub fn check_setup(
-  mut state: ResMut<State<AppState>>,
-  asset_server: Res<AssetServer>,
-  scenario_server: Res<ScenarioSever>,
-  enemy_server: Res<EnemyServer>,
-  bullet_server: Res<BulletServer>,
+pub fn on_exit(
+  mut commands: Commands,
 ) {
-  if LoadState::Loaded != asset_server.get_group_load_state(scenario_server.get_asset_handles()) {
-    return;
-  }
-  // TODO: handle texture loading correctly (or not).
-  if LoadState::Loaded != asset_server.get_group_load_state(enemy_server.get_asset_handles()) {
-    //return;
-  }
-  if LoadState::Loaded != asset_server.get_group_load_state(bullet_server.get_asset_handles()) {
-    //return;
-  }
-  state.set(AppState::InChapter).unwrap();
+  // Remove State resources
+  commands.remove_resource::<ScenarioReader>();
+
+  // Remove Servers
+  commands.remove_resource::<EnemyServer>();
+  commands.remove_resource::<BulletServer>();
+  commands.remove_resource::<ScenarioSever>();
+
+  // Remove Clock
+  commands.remove_resource::<ClockRef>();
 }

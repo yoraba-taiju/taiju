@@ -2,10 +2,6 @@ use std::collections::HashMap;
 use crate::prelude::*;
 use anyhow::Result;
 use bevy::reflect::TypeUuid;
-use bevy::asset::HandleId;
-
-pub mod server;
-pub use server::*;
 
 /******************************************************************************
  ** Course

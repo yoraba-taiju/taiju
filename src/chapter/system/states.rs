@@ -1,3 +1,3 @@
-mod clock;
-mod user_input;
-mod scenario_reader;
+pub mod clock;
+pub mod user_input;
+pub mod scenario_reader;

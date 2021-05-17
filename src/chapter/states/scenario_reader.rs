@@ -8,7 +8,7 @@ pub struct  ScenarioReader {
 }
 
 impl ScenarioReader {
-  fn new(clock: ClockRef, scenario: Scenario) -> Self {
+  pub fn new(clock: ClockRef, scenario: Scenario) -> Self {
     Self {
       scenario,
       page: clock.make(0),

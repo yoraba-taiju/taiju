@@ -1,19 +1,29 @@
 use std::collections::HashMap;
-use bevy::asset::HandleId;
 use crate::prelude::*;
 
-#[derive(Default)]
 pub struct BulletServer {
   pub sprites: HashMap<BulletKind, SpriteBundle>,
 }
 
 impl BulletServer {
-  pub fn get_asset_handles(&self) -> Vec<HandleId> {
-    let mut handles = Vec::new();
-    self.sprites.values().for_each(|it| {
-      handles.push(it.material.id);
-      handles.push(it.mesh.id);
-    });
-    handles
+  pub fn from_loader(loader: &mut Loader) -> Self {
+    let mut s = Self{
+      sprites: Default::default(),
+    };
+    let mut load = |bullet_kind: BulletKind, path: &str| {
+      s.sprites.insert(bullet_kind, loader.load_sprite(path));
+    };  
+    load(BulletKind::BlueSmall, "sprites/bullets/blue_small.png");
+    load(BulletKind::RedSmall, "sprites/bullets/red_small.png");
+    load(BulletKind::BlueNeedle, "sprites/bullets/blue_needle.png");
+    load(BulletKind::RedNeedle, "sprites/bullets/red_needle.png");
+    s
+  }
+
+  pub fn spawn(
+    commands: &mut Commands,
+    bullet_kind: BulletKind,
+  ) {
+    todo!();
   }
 }

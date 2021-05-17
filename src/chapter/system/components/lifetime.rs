@@ -10,9 +10,9 @@ pub fn remove_future_entity (
     return;
   }
   let current = clock.ticks_to_read();
-  for (entity, mut spawned) in query.iter_mut() {
+  for (entity, spawned) in query.iter() {
     let entity: Entity = entity;
-    let spawned: &mut Spawned = &mut spawned;
+    let spawned: &Spawned = &spawned;
     if current <= spawned.at {
       commands.entity(entity).despawn_recursive();
     }
@@ -22,13 +22,13 @@ pub fn remove_future_entity (
 pub fn restore_or_remove_vanished_entity (
   mut commands: Commands,
   clock: Res<ClockRef>,
-  query: Query<(Entity, &mut Vanished)>,
+  query: Query<(Entity, &Vanished)>,
 ) {
   if clock.is_inspected() {
     return;
   }
   let current = clock.ticks_to_read();
-  for (entity, mut vanished) in query.iter_mut() {
+  for (entity, vanished) in query.iter() {
     let entity: Entity = entity;
     let vanished: &Vanished = &vanished;
     if current < vanished.at {

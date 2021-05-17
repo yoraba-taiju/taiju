@@ -1,5 +1,5 @@
 use taiju::*;
 
 fn main() {
-  app::build().run()
+  taiju::build().run()
 }

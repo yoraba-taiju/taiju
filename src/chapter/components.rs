@@ -3,7 +3,7 @@ pub mod lifecycle;
 
 pub mod geometry;
 
-pub mod witches;
+pub mod witch;
 
 pub mod enemy;
 pub mod enemy_attack;
