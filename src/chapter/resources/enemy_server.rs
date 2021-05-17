@@ -12,7 +12,9 @@ impl EnemyServer {
       sprites: Default::default(),
     };
     let mut load = |enemy_kind: EnemyKind, path: &str| {
-      s.sprites.insert(enemy_kind, loader.load_sprite(path));
+      let mut spr = loader.load_sprite(path);
+      spr.visible.is_visible = false;
+      s.sprites.insert(enemy_kind, spr);
     };
     load(EnemyKind::Enemy01, "sprites/bullets/blue_small.png");
     s
@@ -25,19 +27,11 @@ impl EnemyServer {
     commands: &mut Commands,
   ) {
     let mut c = commands.spawn();
-    c.insert(Enemy);
+    c.insert_bundle(self.sprites[&desc.enemy].clone());
+    c.insert(Enemy(desc.enemy.clone()));
+    c.insert(EnemyAttack(desc.attack.clone()));
     c.insert(Spawned::new(&clock));
-    match desc.enemy {
-      EnemyKind::Enemy01 => {
-        let mut sprite = self.sprites[&EnemyKind::Enemy01].clone();
-        sprite.transform.translation.x = desc.position.x;
-        sprite.transform.translation.y = desc.position.y;
-        c.insert_bundle(sprite);
-      }
-    };
+    c.insert(desc.position.clone());
     c.insert(clock.make(desc.position.clone()));
-    match desc.attack {
-      // TODO
-    }
   }
 }

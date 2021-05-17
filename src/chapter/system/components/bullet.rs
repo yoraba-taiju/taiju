@@ -4,7 +4,7 @@ use crate::prelude::*;
 
 pub fn update(
   clock: Res<ClockRef>,
-  mut enemy_query: Query<(Entity, &mut Visible, &Enemy, &EnemyAttack, &mut Value<Position>), Without<Sora>>,
+  mut bullet_query: Query<(Entity, &mut Visible, &Bullet, &mut Value<Position>), Without<Sora>>,
   sora_query: Query<&Value<Position>, With<Sora>>,
 ) {
   if clock.is_inspected() {
@@ -19,9 +19,8 @@ pub fn update(
   for (
     _entity,
     mut visible,
-    Enemy(enemy_kind),
-    EnemyAttack(attack_kind),
-    mut position) in enemy_query.iter_mut()
+    Bullet,
+    mut position) in bullet_query.iter_mut()
   {
     visible.is_visible = true;
   }

@@ -1,19 +1,20 @@
 Scenario(
   course: Course(
-    changes: {
-      0: Constant(32.0, 0),
+    length: 600,
+    speed_changes: {
+      0: Velocity(x: 32.0, y: 0),
     }
   ),
   events: {
     60: [
       SpawnEnemy(EnemyDescription(
-        body: Enemy01,
+        enemy: Enemy01,
+        attack: Attack01,
         position: Position (
           x: 600.0,
           y: 0,
         ),
-        motion: Some(Constant(-2.0, 0)),
       )),
     ],
-  }.
+  }
 )

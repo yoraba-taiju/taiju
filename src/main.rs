@@ -1,5 +1,5 @@
-use taiju::*;
+use taiju::build;
 
 fn main() {
-  taiju::build().run()
+  build().run()
 }

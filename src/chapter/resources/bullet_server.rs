@@ -11,8 +11,10 @@ impl BulletServer {
       sprites: Default::default(),
     };
     let mut load = |bullet_kind: BulletKind, path: &str| {
-      s.sprites.insert(bullet_kind, loader.load_sprite(path));
-    };  
+      let mut spr = loader.load_sprite(path);
+      spr.visible.is_visible = false;
+      s.sprites.insert(bullet_kind, spr);
+    };
     load(BulletKind::BlueSmall, "sprites/bullets/blue_small.png");
     load(BulletKind::RedSmall, "sprites/bullets/red_small.png");
     load(BulletKind::BlueNeedle, "sprites/bullets/blue_needle.png");

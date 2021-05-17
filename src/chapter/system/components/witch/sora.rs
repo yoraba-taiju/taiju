@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 pub fn spawn(
   commands: &mut Commands,
-  clock: &Res<ClockRef>,
+  clock: ClockRef,
   asset_server: &Res<AssetServer>,
   color_materials: &mut ResMut<Assets<ColorMaterial>>
 ) {
@@ -28,7 +28,11 @@ pub fn update(
   if clock.is_inspected() {
     return;
   }
-  let pos: &mut Value<Position> = &mut (query.single_mut().unwrap());
+  let mut pos = if let Ok(pos) = query.single_mut() {
+    pos
+  } else {
+    return;
+  };
   pos.x += input.x * 500.0 / 60.0;
   pos.y += input.y * 500.0 / 60.0;
 }

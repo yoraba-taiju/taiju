@@ -10,6 +10,8 @@ pub fn on_enter(
   mut commands: Commands,
   scenario_server: Res<ScenarioSever>,
   scenarios: Res<Assets<Scenario>>,
+  asset_server: Res<AssetServer>,
+  mut color_materials: ResMut<Assets<ColorMaterial>>,
 ) {
   // Init clock
   let clock: ClockRef = Clock::new();
@@ -18,6 +20,8 @@ pub fn on_enter(
   // Span Scenario Reader
   let scenario = scenario_server.get_scenario(&scenarios);
   commands.insert_resource(ScenarioReader::new(clock.clone(), scenario));
+
+  crate::chapter::system::components::witch::sora::spawn(&mut commands, clock, &asset_server, &mut color_materials);
 
   // cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
