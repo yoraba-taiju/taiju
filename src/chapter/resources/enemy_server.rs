@@ -22,17 +22,19 @@ impl EnemyServer {
 
   pub fn spawn(
     &self,
-    desc: &EnemyDescription,
     clock: &Res<ClockRef>,
     commands: &mut Commands,
+    enemy_kind: EnemyKind,
+    attack_kind: EnemyAttackKind,
+    position: Position,
   ) {
     let mut c = commands.spawn();
     c.insert(Spawned::new(&clock));
     c.insert(MakeVisible);
 
-    c.insert(Enemy(desc.enemy.clone()));
-    c.insert(EnemyAttack(desc.attack.clone()));
-    c.insert_bundle(self.sprites[&desc.enemy].clone());
-    c.insert(clock.make(desc.position.clone()));
+    c.insert(Enemy(enemy_kind));
+    c.insert(EnemyAttack(attack_kind));
+    c.insert_bundle(self.sprites[&enemy_kind].clone());
+    c.insert(clock.make(position));
   }
 }

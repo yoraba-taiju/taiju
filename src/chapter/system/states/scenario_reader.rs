@@ -20,7 +20,6 @@ pub fn update(
   let scenario = &reader.scenario;
   let current = *reader.page;
   if let Some(velocity) = scenario.course.speed_changes.get(&current) {
-
   }
   if let Some(events) = scenario.events.get(&current) {
     for ev in events.iter() {
@@ -28,8 +27,8 @@ pub fn update(
         Event::SpawnWitch(witch_kind, position) => {
           witch_server.spawn(&clock, &mut commands, witch_kind, position);
         }
-        Event::SpawnEnemy(desc) => {
-          enemy_server.spawn(&desc, &clock, &mut commands);
+        Event::SpawnEnemy(enemy_kind, attack_kind, position) => {
+          enemy_server.spawn(&clock, &mut commands, enemy_kind, attack_kind, position);
         }
         Event::SpawnScape(scape) => {
           todo!()

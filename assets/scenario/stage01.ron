@@ -10,14 +10,7 @@ Scenario(
       SpawnWitch(Sora, Position(x: -600, y: 0)),
     ],
     60: [
-      SpawnEnemy(EnemyDescription(
-        enemy: Enemy01,
-        attack: Attack01,
-        position: Position (
-          x: 600.0,
-          y: 0,
-        ),
-      )),
+      SpawnEnemy(Enemy01, Attack01, Position(x: 600, y: 0)),
     ],
   }
 )
