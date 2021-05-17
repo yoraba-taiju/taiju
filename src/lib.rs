@@ -22,6 +22,7 @@ pub enum ChapterSystemLabel {
   PrepareFrame,
   UpdateStates,
   RenderFrame,
+  UpdateScenario,
   EndFrame,
 }
 
@@ -94,6 +95,7 @@ pub fn build() -> bevy::prelude::App {
         .label(UpdateStates)
         .after(PrepareFrame)
         .with_system(sys::components::enemy::update.system())
+        .with_system(sys::components::bullet::update.system())
         .with_system(sys::components::witch::sora::update.system())
       )
       .add_system_set(SystemSet::on_update(AppState::InChapter)
@@ -105,10 +107,14 @@ pub fn build() -> bevy::prelude::App {
         .with_system(sys::components::make_invisible.system())
       )
       .add_system_set(SystemSet::on_update(AppState::InChapter)
-        .label(EndFrame)
+        .label(UpdateScenario)
         .after(RenderFrame)
-        .with_system(sys::states::clock::update.system())
         .with_system(sys::states::scenario_reader::update.system())
+      )
+      .add_system_set(SystemSet::on_update(AppState::InChapter)
+        .label(EndFrame)
+        .after(UpdateScenario)
+        .with_system(sys::states::clock::update.system())
       );
   }
   builder.app
