@@ -3,7 +3,7 @@ use crate::prelude::*;
 pub fn update(
   clock: Res<ClockRef>,
   input: Res<UserInput>,
-  mut query: Query<&mut Value<Position>, With<Sora>>
+  mut query: Query<&mut Value<Position>, (With<Sora>, Without<Vanished>)>
 ) {
   if clock.is_inspected() {
     return;

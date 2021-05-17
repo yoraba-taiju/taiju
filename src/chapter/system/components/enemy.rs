@@ -4,8 +4,8 @@ use crate::prelude::*;
 
 pub fn update(
   clock: Res<ClockRef>,
-  mut enemy_query: Query<(Entity, &Enemy, &EnemyAttack, &mut Value<Position>), Without<Sora>>,
-  sora_query: Query<&Value<Position>, With<Sora>>,
+  mut enemy_query: Query<(Entity, &Enemy, &EnemyAttack, &mut Value<Position>), (Without<Sora>, Without<Vanished>)>,
+  sora_query: Query<&Value<Position>, (With<Sora>, Without<Vanished>)>,
 ) {
   if clock.is_inspected() {
     return;

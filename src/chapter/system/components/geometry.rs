@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn copy_position(mut query: Query<(&Value<Position>, &mut Transform)>) {
+pub fn copy_position(mut query: Query<(&Value<Position>, &mut Transform), Without<Vanished>>) {
   for (pos, mut trans) in query.iter_mut() {
     let pos: &Value<Position> = &pos;
     let trans: &mut Transform = &mut trans;
@@ -9,7 +9,7 @@ pub fn copy_position(mut query: Query<(&Value<Position>, &mut Transform)>) {
   }
 }
 
-pub fn copy_rotation(mut query: Query<(&Value<Rotation>, &mut Transform)>) {
+pub fn copy_rotation(mut query: Query<(&Value<Rotation>, &mut Transform), Without<Vanished>>) {
   for (rot, mut trans) in query.iter_mut() {
     let rot: &Value<Rotation> = &rot;
     let trans: &mut Transform = &mut trans;

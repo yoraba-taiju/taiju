@@ -3,7 +3,6 @@ use crate::prelude::*;
 pub fn remove_future_entity (
   mut commands: Commands,
   clock: Res<ClockRef>,
-  user_input: Res<UserInput>,
   query: Query<(Entity, &Spawned)>,
 ) {
   if !clock.is_inspected() {
