@@ -13,7 +13,11 @@ pub fn on_enter<'a, 'b, 'c>(
   asset_server: Res<'b, AssetServer>,
   color_materials: ResMut<'c, Assets<ColorMaterial>>,
 ) {
-  let mut loader = Loader::new(asset_server, color_materials);
+  // なぜかここで一回moveしておくと使えるようになる。
+  // 関数の引数の生存区間がなんかおかしい気がする
+  let asset_server = asset_server;
+  let mut color_materials = color_materials;
+  let mut loader = Loader::new(&asset_server, &mut color_materials);
   let scenario_server = ScenarioSever::from_loader(&mut loader);
   let witch_server = WitchServer::from_loader(&mut loader);
   let enemy_server = EnemyServer::from_loader(&mut loader);

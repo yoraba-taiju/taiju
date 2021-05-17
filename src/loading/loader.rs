@@ -3,8 +3,8 @@ use crate::prelude::*;
 use bevy::asset::{Asset, Handle, HandleId};
 
 pub struct Loader<'a> {
-  asset_server: Res<'a, AssetServer>,
-  color_materials: ResMut<'a, Assets<ColorMaterial>>,
+  asset_server: &'a Res<'a, AssetServer>,
+  color_materials: &'a mut ResMut<'a, Assets<ColorMaterial>>,
   handle_ids: Vec<HandleId>,
 }
 
@@ -12,8 +12,8 @@ impl <'a> Loader<'a>
 where
 {
   pub fn new(
-    asset_server: Res<'a, AssetServer>,
-    color_materials: ResMut<'a, Assets<ColorMaterial>>,
+    asset_server: &'a Res<'a, AssetServer>,
+    color_materials: &'a mut ResMut<'a, Assets<ColorMaterial>>,
   ) -> Self
   where
   {
