@@ -101,6 +101,8 @@ pub fn build() -> bevy::prelude::App {
         .after(UpdateStates)
         .with_system(sys::components::geometry::copy_position.system())
         .with_system(sys::components::geometry::copy_rotation.system())
+        .with_system(sys::components::make_visible.system())
+        .with_system(sys::components::make_invisible.system())
       )
       .add_system_set(SystemSet::on_update(AppState::InChapter)
         .label(EndFrame)

@@ -1,5 +1,6 @@
 use crate::{
   chapter::resources::{
+    WitchServer,
     EnemyServer,
     BulletServer,
   },
@@ -14,9 +15,11 @@ pub fn on_enter<'a, 'b, 'c>(
 ) {
   let mut loader = Loader::new(asset_server, color_materials);
   let scenario_server = ScenarioSever::from_loader(&mut loader);
+  let witch_server = WitchServer::from_loader(&mut loader);
   let enemy_server = EnemyServer::from_loader(&mut loader);
   let bullet_server = BulletServer::from_loader(&mut loader);
   commands.insert_resource(scenario_server);
+  commands.insert_resource(witch_server);
   commands.insert_resource(enemy_server);
   commands.insert_resource(bullet_server);
   let status: LoadingStatus = loader.build();

@@ -18,6 +18,7 @@ pub struct Course {
  ******************************************************************************/
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Event {
+  SpawnWitch(WitchKind, Position),
   SpawnEnemy(EnemyDescription),
   SpawnScape(ScapeDescription),
   //CourseBack(Condition, u32),

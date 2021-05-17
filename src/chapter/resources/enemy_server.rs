@@ -27,11 +27,12 @@ impl EnemyServer {
     commands: &mut Commands,
   ) {
     let mut c = commands.spawn();
-    c.insert_bundle(self.sprites[&desc.enemy].clone());
+    c.insert(Spawned::new(&clock));
+    c.insert(MakeVisible);
+
     c.insert(Enemy(desc.enemy.clone()));
     c.insert(EnemyAttack(desc.attack.clone()));
-    c.insert(Spawned::new(&clock));
-    c.insert(desc.position.clone());
+    c.insert_bundle(self.sprites[&desc.enemy].clone());
     c.insert(clock.make(desc.position.clone()));
   }
 }

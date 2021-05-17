@@ -8,6 +8,7 @@ pub use crate::{
   },
   chapter::{
     components::{
+      visibility::*,
       background::*,
       bullet::*,
       enemy::*,
@@ -18,6 +19,7 @@ pub use crate::{
       witch::*,
     },
     resources:: {
+      WitchServer,
       EnemyServer,
       BulletServer,
       ScenarioSever,

@@ -10,6 +10,7 @@ pub fn update(
   clock: Res<ClockRef>,
   mut commands: Commands,
   _asset_server: Res<AssetServer>,
+  witch_server: Res<WitchServer>,
   enemy_server: Res<EnemyServer>,
 ) {
   if clock.is_inspected() {
@@ -24,6 +25,9 @@ pub fn update(
   if let Some(events) = scenario.events.get(&current) {
     for ev in events.iter() {
       match ev.clone() {
+        Event::SpawnWitch(witch_kind, position) => {
+          witch_server.spawn(&clock, &mut commands, witch_kind, position);
+        }
         Event::SpawnEnemy(desc) => {
           enemy_server.spawn(&desc, &clock, &mut commands);
         }

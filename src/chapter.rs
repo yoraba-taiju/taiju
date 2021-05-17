@@ -21,8 +21,6 @@ pub fn on_enter(
   let scenario = scenario_server.get_scenario(&scenarios);
   commands.insert_resource(ScenarioReader::new(clock.clone(), scenario));
 
-  crate::chapter::system::components::witch::sora::spawn(&mut commands, clock, &asset_server, &mut color_materials);
-
   // cameras
   commands.spawn_bundle(OrthographicCameraBundle::new_2d());
   commands.spawn_bundle(UiCameraBundle::default());
@@ -35,6 +33,7 @@ pub fn on_exit(
   commands.remove_resource::<ScenarioReader>();
 
   // Remove Servers
+  commands.remove_resource::<WitchServer>();
   commands.remove_resource::<EnemyServer>();
   commands.remove_resource::<BulletServer>();
   commands.remove_resource::<ScenarioSever>();

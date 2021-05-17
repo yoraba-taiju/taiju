@@ -6,6 +6,9 @@ Scenario(
     }
   ),
   events: {
+    30: [
+      SpawnWitch(Sora, Position(x: -600, y: 0)),
+    ],
     60: [
       SpawnEnemy(EnemyDescription(
         enemy: Enemy01,
