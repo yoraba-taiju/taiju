@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use crate::prelude::*;
-use crate::chapter::scenario::EnemyDescription;
 
 pub struct EnemyServer {
   pub sprites: HashMap<EnemyKind, SpriteBundle>,
