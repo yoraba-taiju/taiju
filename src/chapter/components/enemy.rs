@@ -6,7 +6,7 @@ pub struct Enemy(pub EnemyKind, pub EnemyAttackKind);
 pub enum EnemyKind {
   Enemy01,
 }
-#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum EnemyAttackKind {
   Attack01,
   Kamikaze,

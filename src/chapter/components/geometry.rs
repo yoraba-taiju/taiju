@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Size {
   pub w: f32,
   pub h: f32,
@@ -15,7 +15,7 @@ impl Size {
   }
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Position {
   pub x: f32,
   pub y: f32,
@@ -30,7 +30,7 @@ impl Position {
   }
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Velocity {
   pub x: f32,
   pub y: f32,
@@ -46,7 +46,7 @@ impl Velocity {
 }
 
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Area {
   pub position: Position,
   pub size: Size,
@@ -61,7 +61,7 @@ impl Area {
   }
 }
 
-#[derive(Default, Debug, Clone, Copy)]
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Rotation {
   pub quaternion: Quat,
 }

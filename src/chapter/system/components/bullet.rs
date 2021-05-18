@@ -19,7 +19,7 @@ pub fn update(
   for (
     _entity,
     mut visible,
-    Bullet,
+    Bullet(bullet_kind, attack_kind),
     mut position) in bullet_query.iter_mut()
   {
     visible.is_visible = true;
