@@ -31,8 +31,7 @@ impl EnemyServer {
     c.insert(Spawned::new(&clock));
     c.insert(MakeVisible);
 
-    c.insert(Enemy(enemy_kind));
-    c.insert(EnemyAttack(attack_kind));
+    c.insert(Enemy(enemy_kind, attack_kind));
     c.insert_bundle(self.sprites[&enemy_kind].clone());
     c.insert(clock.make(position));
   }

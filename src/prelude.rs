@@ -12,7 +12,6 @@ pub use crate::{
       background::*,
       bullet::*,
       enemy::*,
-      enemy_attack::*,
       geometry::*,
       lifecycle::*,
       scape::*,

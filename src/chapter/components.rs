@@ -7,9 +7,9 @@ pub mod geometry;
 pub mod witch;
 
 pub mod enemy;
-pub mod enemy_attack;
+
+pub mod bullet;
 
 pub mod scape;
 pub mod background;
-pub mod bullet;
 
