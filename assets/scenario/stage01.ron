@@ -10,7 +10,7 @@ Scenario(
       SpawnWitch(Sora, Position(x: -600, y: 0)),
     ],
     60: [
-      SpawnEnemy(Enemy01, Kamikaze(speed: 6.0, max_angle: 32.0), Position(x: 600, y: 0)),
+      SpawnEnemy(Enemy01, Kamikaze(speed: 4.0, max_angle: 5.0), Position(x: 600, y: 0)),
     ],
   }
 )
