@@ -8,6 +8,6 @@ pub enum EnemyKind {
 }
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum EnemyAttackKind {
-  Attack01,
-  Kamikaze,
+  JustFly(Velocity),
+  Kamikaze{ speed: f32, max_angle: f32 },
 }

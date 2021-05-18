@@ -34,5 +34,13 @@ impl EnemyServer {
     c.insert(Enemy(enemy_kind, attack_kind));
     c.insert_bundle(self.sprites[&enemy_kind].clone());
     c.insert(clock.make(position));
+    match attack_kind {
+      EnemyAttackKind::JustFly(velocity) => {
+        c.insert(clock.make(velocity));
+      }
+      EnemyAttackKind::Kamikaze { speed, max_angle: _ } => {
+        c.insert(clock.make(Velocity::new(speed, 0.0)));
+      }
+    }
   }
 }
