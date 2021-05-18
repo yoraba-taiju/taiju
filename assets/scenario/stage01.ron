@@ -2,7 +2,7 @@ Scenario(
   course: Course(
     length: 600,
     speed_changes: {
-      0: Velocity(x: 32.0, y: 0),
+      0: Velocity(dx: 32.0, dy: 0),
     }
   ),
   events: {

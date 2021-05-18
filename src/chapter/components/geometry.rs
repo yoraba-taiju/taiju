@@ -32,15 +32,21 @@ impl Position {
 
 #[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Velocity {
-  pub x: f32,
-  pub y: f32,
+  pub dx: f32,
+  pub dy: f32,
 }
 
 impl Velocity {
-  pub fn new(x: f32, y: f32) -> Self {
+  pub fn new(dx: f32, dy: f32) -> Self {
     Self {
-      x,
-      y,
+      dx,
+      dy,
+    }
+  }
+  pub fn apply(&self, position: Position) -> Position {
+    Position {
+      x: position.x + self.dx,
+      y: position.x + self.dy,
     }
   }
 }
@@ -70,6 +76,24 @@ impl Rotation {
   fn new(z_angle: f32) -> Self {
     Self {
       quaternion: Quat::from_rotation_z(z_angle),
+    }
+  }
+}
+
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct RotationalVelocity {
+  pub quaternion: Quat,
+}
+
+impl RotationalVelocity {
+  fn new(z_angle: f32) -> Self {
+    Self {
+      quaternion: Quat::from_rotation_z(z_angle),
+    }
+  }
+  fn apply(&self, rotation: &Rotation) -> Rotation {
+    Rotation{
+      quaternion: rotation.quaternion.mul_quat(self.quaternion).normalize(),
     }
   }
 }
