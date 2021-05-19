@@ -4,6 +4,23 @@ use anyhow::Result;
 use bevy::reflect::TypeUuid;
 
 /******************************************************************************
+ ** Conds
+ ******************************************************************************/
+
+ #[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Condition {
+  Always,
+  WhenFlagSet(String),
+  WhenFlagNotSet(String),
+}
+
+impl Default for Condition {
+  fn default() -> Self {
+    Condition::Always
+  }
+}
+
+/******************************************************************************
  ** Course
  ******************************************************************************/
 
@@ -21,7 +38,6 @@ pub enum Event {
   SpawnWitch(WitchKind, Position),
   SpawnEnemy(EnemyKind, EnemyAttackKind, Position),
   SpawnScape(ScapeDescription),
-  //CourseBack(Condition, u32),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -37,13 +53,6 @@ pub struct ScapeDescription {
   pub position: Position,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum Condition {
-  Always,
-  WhenFlagSet(String),
-  WhenFlagNotSet(String),
-}
-
 /******************************************************************************
  ** Scenario
  ******************************************************************************/
@@ -56,13 +65,11 @@ pub struct Scenario {
 }
 
 impl Scenario {
-  #[allow(dead_code)]
-  pub(crate) fn try_from_bytes(bytes: &[u8]) -> Result<Scenario> {
+  pub fn try_from_bytes(bytes: &[u8]) -> Result<Scenario> {
     let str = std::str::from_utf8(&bytes)?;
     ron::from_str::<Scenario>(str).map_err(anyhow::Error::from)
   }
-  #[allow(dead_code)]
-  pub(crate) fn to_string(&self) -> String {
+  pub fn to_string(&self) -> String {
     ron::ser::to_string(self).unwrap()
   }
 }
