@@ -66,22 +66,6 @@ impl Velocity {
   }
 }
 
-impl Sub for Velocity {
-  type Output = Vec2;
-
-  fn sub(self, rhs: Self) -> Self::Output {
-    self.to_vec2() - rhs.to_vec2()
-  }
-}
-
-impl Add for Velocity {
-  type Output = Vec2;
-
-  fn add(self, rhs: Self) -> Self::Output {
-    self.to_vec2() + rhs.to_vec2()
-  }
-}
-
 /******************************************************************************
  ** Size/Area
  ******************************************************************************/
