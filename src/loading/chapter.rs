@@ -24,11 +24,11 @@ pub fn on_enter<'a, 'b, 'c>(
   let scenario_server = ScenarioSever::from_loader(&mut loader);
   let witch_server = WitchServer::from_loader(&mut loader);
   let enemy_server = EnemyServer::from_loader(&mut loader);
-  let bullet_server = EnemyBulletServer::from_loader(&mut loader);
+  let enemy_bullet_server = EnemyBulletServer::from_loader(&mut loader);
   commands.insert_resource(scenario_server);
   commands.insert_resource(witch_server);
   commands.insert_resource(enemy_server);
-  commands.insert_resource(bullet_server);
+  commands.insert_resource(enemy_bullet_server);
   let status: LoadingStatus = loader.build();
   commands.insert_resource(status);
 }
