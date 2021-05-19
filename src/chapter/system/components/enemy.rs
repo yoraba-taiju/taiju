@@ -13,7 +13,7 @@ pub fn update(
     if let Ok(pos) = sora_query.single() {
       **pos
     } else {
-      Position::new(0.0, 0.0)
+      Position::ZERO
     };
   for (
     _entity,
@@ -29,27 +29,27 @@ pub fn update(
         **velocity = attack_velocity;
       }
       EnemyAttackKind::Kamikaze {speed, max_angle} => {
-        let current_speed = Vec2::new(velocity.dx, velocity.dy);
+        let current_speed = velocity.to_vec2();
         if spawned_from < 60 {
-          let to_sora = Vec2::new(sora_position.x - position.x, sora_position.y - position.y).normalize();
+          let vec_to_sora = (sora_position - **position).normalize();
+
           let max_angle = max_angle * std::f32::consts::PI / 180.0;
-          let max_angle_plus = Mat2::from_angle(max_angle).mul_vec2(current_speed).normalize();
-          let max_angle_minus = Mat2::from_angle(-max_angle).mul_vec2(current_speed).normalize();
+          let max_vec_l = Mat2::from_angle(max_angle).mul_vec2(current_speed).normalize();
+          let max_vec_r = Mat2::from_angle(-max_angle).mul_vec2(current_speed).normalize();
+
           let attack_velocity: Vec2 = 
-            if to_sora.dot(current_speed) <= max_angle_plus.dot(current_speed) {
-              to_sora
-            } else if max_angle_plus.dot(to_sora) <= max_angle_minus.dot(to_sora) {
-              max_angle_plus
+            if vec_to_sora.dot(current_speed) <= max_vec_l.dot(current_speed) {
+              vec_to_sora
+            } else if max_vec_l.dot(vec_to_sora) <= max_vec_r.dot(vec_to_sora) {
+              max_vec_l
             } else {
-              max_angle_minus
+              max_vec_r
             } * speed;
-          velocity.dx = attack_velocity.x;
-          velocity.dy = attack_velocity.y;
+          **velocity = Velocity::from_vec2(&attack_velocity);
         } else {
           if spawned_from == 60 {
             let attack_velocity = current_speed * 3.0;
-            velocity.dx = attack_velocity.x;
-            velocity.dy = attack_velocity.y;
+            **velocity = Velocity::from_vec2(&attack_velocity);
           }
         }
       }
