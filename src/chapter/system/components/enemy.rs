@@ -20,7 +20,8 @@ pub fn update(
     Spawned { at: spawned_at },
     Enemy(_enemy_kind, attack_kind),
     mut position,
-    mut velocity) in enemy_query.iter_mut()
+    mut velocity
+  ) in enemy_query.iter_mut()
   {
     let spawned_from = clock.current_time().ticks - spawned_at;
     match attack_kind.clone() {
