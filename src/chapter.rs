@@ -35,7 +35,7 @@ pub fn on_exit(
   // Remove Servers
   commands.remove_resource::<WitchServer>();
   commands.remove_resource::<EnemyServer>();
-  commands.remove_resource::<BulletServer>();
+  commands.remove_resource::<EnemyBulletServer>();
   commands.remove_resource::<ScenarioSever>();
 
   // Remove Clock

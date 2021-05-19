@@ -95,7 +95,7 @@ pub fn build() -> bevy::prelude::App {
         .label(UpdateStates)
         .after(PrepareFrame)
         .with_system(sys::components::enemy::update.system())
-        .with_system(sys::components::bullet::update.system())
+        .with_system(sys::components::enemy_bullet::update.system())
         .with_system(sys::components::witch::sora::update.system())
       )
       .add_system_set(SystemSet::on_update(AppState::InChapter)

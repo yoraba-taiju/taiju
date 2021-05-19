@@ -10,7 +10,7 @@ pub use crate::{
     components::{
       visibility::*,
       background::*,
-      bullet::*,
+      enemy_bullet::*,
       enemy::*,
       geometry::*,
       lifecycle::*,
@@ -20,7 +20,7 @@ pub use crate::{
     resources:: {
       WitchServer,
       EnemyServer,
-      BulletServer,
+      EnemyBulletServer,
       ScenarioSever,
     },
     states:: {

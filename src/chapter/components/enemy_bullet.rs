@@ -1,8 +1,8 @@
 use crate::prelude::*;
-pub struct Bullet(pub BulletKind, pub BulletAttackKind);
+pub struct EnemyBullet(pub EnemyBulletKind, pub EnemyBulletAttackKind);
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Eq, PartialEq, Hash)]
-pub enum BulletKind {
+pub enum EnemyBulletKind {
   BlueSmall,
   RedSmall,
   BlueNeedle,
@@ -10,6 +10,6 @@ pub enum BulletKind {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub enum BulletAttackKind {
+pub enum EnemyBulletAttackKind {
   Constant(Velocity)
 }
