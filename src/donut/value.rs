@@ -52,7 +52,8 @@ impl <T: Clone> Value<T> {
   fn find_read_index(&self, clock: &Arc<Clock>, ticks: u32) -> usize {
     let time = clock.adjust_read_time(self.last_modified_leaps, ticks);
     if time < self.begin_ticks {
-      panic!("Don't read a value in the future! (current: {}, this value initiated at: {})", time, self.begin_ticks);
+      let current = clock.current_time();
+      panic!("Don't read a value in the future! (current subj time: ({},{}), last modified leaps: {}, tick to read: {}, this value initiated at: {})", current.leaps, current.ticks, self.last_modified_leaps, time, self.begin_ticks);
     }
     return min((time - self.begin_ticks) as usize, self.history.len() - 1);
   }
@@ -76,7 +77,7 @@ impl <T: Clone> DerefMut for Value<T> {
     }
     let current_time = clock.current_time();
     if self.begin_ticks > current_time.ticks {
-      panic!("Don't write into a value in the future! (current: {}, this value initiated at: {})", current_time.ticks, self.begin_ticks);
+      panic!("Don't write into a value in the future! (current subj time: ({},{}), last modified leaps: {}, this value initiated at: {})", current_time.leaps, current_time.ticks, self.last_modified_leaps, self.begin_ticks);
     }
     self.last_modified_leaps = current_time.leaps;
     let write_index = (current_time.ticks - self.begin_ticks) as usize;
