@@ -30,6 +30,7 @@ impl WitchServer {
     position: Position,
   ) {
     let mut c = commands.spawn();
+    c.insert(Spawned::new(clock));
     c.insert(Witch {
       health: clock.make(100),
       spell: clock.make(100),
