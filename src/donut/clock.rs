@@ -68,7 +68,7 @@ impl Clock {
     let state = self.state.read().expect("Failed to lock Clock (read)");
     if let Some(ticks) = state.inspect_at {
       SubjectiveTime{
-        leaps: state.current.ticks,
+        leaps: state.current.leaps,
         ticks,
       }
     } else {
