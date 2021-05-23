@@ -1,5 +1,3 @@
-use lazy_static::__Deref;
-
 use crate::prelude::*;
 
 pub fn update(
@@ -12,7 +10,7 @@ pub fn update(
   }
   let sora_position: Position = 
     if let Ok(pos) = sora_query.single() {
-      pos.deref().clone()
+      **pos
     } else {
       Position::new(0.0, 0.0)
     };

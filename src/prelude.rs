@@ -15,10 +15,12 @@ pub use crate::{
       geometry::*,
       lifecycle::*,
       scape::*,
+      witch_bullet::*,
       witch::*,
     },
     resources:: {
       WitchServer,
+      WitchBulletServer,
       EnemyServer,
       EnemyBulletServer,
       ScenarioSever,

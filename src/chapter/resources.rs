@@ -1,6 +1,9 @@
 mod witch_server;
 pub use witch_server::*;
 
+mod witch_bullet_server;
+pub use witch_bullet_server::*;
+
 mod enemy_bullet_server;
 pub use enemy_bullet_server::*;
 
