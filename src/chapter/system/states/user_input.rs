@@ -12,6 +12,7 @@ pub fn update(
   keyboard_input: Res<Input<KeyCode>>,
   mut gamepad_event: EventReader<GamepadEvent>,
 ) {
+  println!("Input Updated");
   for event in gamepad_event.iter() {
     match &event {
       GamepadEvent(gamepad, GamepadEventType::Connected) => {

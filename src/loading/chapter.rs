@@ -44,7 +44,6 @@ pub fn update(
   if !status.is_loaded(&asset_server) {
     return;
   }
-
   state.set(AppState::InChapter).unwrap();
 }
 

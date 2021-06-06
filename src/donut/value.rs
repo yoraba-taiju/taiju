@@ -53,7 +53,7 @@ impl <T: Clone> Value<T> {
     let time = clock.adjust_read_time(self.last_modified_leaps, ticks);
     if time < self.begin_ticks {
       let current = clock.current_time();
-      panic!("Don't read a value in the future! (current subj time: ({},{}), last modified leaps: {}, tick to read: {}, this value initiated at: {})", current.leaps, current.ticks, self.last_modified_leaps, time, self.begin_ticks);
+      panic!("Don't read a value in the future! (current subj time: ({},{}), tick to read: {}, last modified leaps: {}, this value initiated at: {})", current.leaps, current.ticks, time, self.last_modified_leaps, self.begin_ticks);
     }
     return min((time - self.begin_ticks) as usize, self.history.len() - 1);
   }

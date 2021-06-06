@@ -18,18 +18,27 @@ pub enum AppState {
 }
 
 #[derive(Clone, Hash, Debug, PartialEq, Eq, SystemLabel)]
-pub enum ChapterSystemLabel {
-  PrepareFrame,
+pub enum ChapterUpdate {
   UpdateStates,
   RenderFrame,
-  UpdateScenario,
-  EndFrame,
+}
+
+#[derive(Clone, Hash, Debug, PartialEq, Eq, SystemLabel)]
+pub enum PostChapterUpdate {
+  TickClock,
+  PrepareNextFrame,
+}
+
+#[derive(Clone, Hash, Debug, PartialEq, Eq, StageLabel)]
+pub enum ChapterStage {
+  PreUpdate,
+  PostUpdate,
 }
 
 pub fn build() -> bevy::prelude::App {
-
   let mut builder = App::build();
   builder
+    .add_plugins(DefaultPlugins)
     .insert_resource(WindowDescriptor {
       title: "Yoraba Taiju".to_string(),
       width: 1920.,
@@ -37,7 +46,6 @@ pub fn build() -> bevy::prelude::App {
       vsync: true,
       ..Default::default()
     })
-    .add_plugins(DefaultPlugins)
     .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.9)));
 
   // Define Our States
@@ -46,8 +54,9 @@ pub fn build() -> bevy::prelude::App {
     .insert_resource(UserInput::default());
   
   { // Prepare loading
-    builder.add_state(AppState::LoadingChapter);
+    builder.add_state_to_stage(CoreStage::Update, AppState::LoadingChapter);
   }
+
 
   { // Loading Scene
     builder
@@ -70,53 +79,58 @@ pub fn build() -> bevy::prelude::App {
 
   { // Main Game Stage
     // https://github.com/bevyengine/bevy/blob/38feddb87850424df3a0b08bae8dc32c57004798/examples/ecs/system_sets.rs
-    use ChapterSystemLabel::*;
     use chapter::system as sys;
-    builder
-      // Enter
-      .add_system_set(SystemSet::on_enter(AppState::InChapter)
-        .with_system(chapter::on_enter.system())
-      )
-      // Exit
-      .add_system_set(SystemSet::on_exit(AppState::InChapter)
-        .with_system(chapter::on_exit.system())
-      );
+    builder.add_stage_before(CoreStage::Update, ChapterStage::PreUpdate, SystemStage::parallel());
+    builder.add_stage_after(CoreStage::Update, ChapterStage::PostUpdate, SystemStage::parallel());
 
-    // Updates
-    builder
-      .add_system_set(SystemSet::on_update(AppState::InChapter)
-        .label(PrepareFrame)
-        .with_system(sys::states::user_input::update.system())
-        .with_system(sys::components::geometry::vanish_entity.system())
-        .with_system(sys::components::lifetime::remove_future_entity.system())
-        .with_system(sys::components::lifetime::restore_or_remove_vanished_entity.system())
-      )
-      .add_system_set(SystemSet::on_update(AppState::InChapter)
-        .label(UpdateStates)
-        .after(PrepareFrame)
-        .with_system(sys::components::enemy::update.system())
-        .with_system(sys::components::enemy_bullet::update.system())
-        .with_system(sys::components::witch::sora::update.system())
-        .with_system(sys::components::witch::sora_bullet::update.system())
-      )
-      .add_system_set(SystemSet::on_update(AppState::InChapter)
-        .label(RenderFrame)
-        .after(UpdateStates)
+    // On Enter
+    let on_enter_system_set = SystemSet::on_enter(AppState::InChapter)
+      .with_system(chapter::on_enter.system());
+
+    // On Exit
+    let on_exit_system_set = SystemSet::on_exit(AppState::InChapter)
+      .with_system(chapter::on_exit.system());
+
+    // On Update
+    let prepare_current_frame_set = SystemSet::on_update(AppState::InChapter)
+        .with_system(sys::states::scenario_reader::update.system())
+        .with_system(sys::states::user_input::update.system());
+
+    let update_system_set = SystemSet::on_update(AppState::InChapter)
+        .label(ChapterUpdate::UpdateStates)
+          .with_system(sys::components::enemy::update.system())
+          .with_system(sys::components::enemy_bullet::update.system())
+          .with_system(sys::components::witch::sora::update.system())
+          .with_system(sys::components::witch::sora_bullet::update.system());
+
+    let render_system_set = SystemSet::on_update(AppState::InChapter)
+      .label(ChapterUpdate::RenderFrame)
+      .after(ChapterUpdate::UpdateStates)
         .with_system(sys::components::geometry::copy_position.system())
         .with_system(sys::components::geometry::copy_rotation.system())
         .with_system(sys::components::make_visible.system())
-        .with_system(sys::components::make_invisible.system())
-      )
-      .add_system_set(SystemSet::on_update(AppState::InChapter)
-        .label(UpdateScenario)
-        .after(RenderFrame)
-        .with_system(sys::states::scenario_reader::update.system())
-      )
-      .add_system_set(SystemSet::on_update(AppState::InChapter)
-        .label(EndFrame)
-        .after(UpdateScenario)
-        .with_system(sys::states::clock::update.system())
-      );
+        .with_system(sys::components::make_invisible.system());
+
+    let clock_tick_set = SystemSet::on_update(AppState::InChapter)
+      .label(PostChapterUpdate::TickClock)
+        .with_system(sys::states::clock::update.system());
+
+    let prepare_next_frame_set = SystemSet::on_update(AppState::InChapter)
+      .label(PostChapterUpdate::PrepareNextFrame)
+      .after(PostChapterUpdate::TickClock)
+        .with_system(sys::components::lifetime::remove_future_entity.system())
+        .with_system(sys::components::lifetime::restore_or_remove_vanished_entity.system())
+        .with_system(sys::components::geometry::vanish_entity.system());
+
+    builder
+      .add_system_set_to_stage(CoreStage::Update, on_enter_system_set)
+      .add_system_set_to_stage(CoreStage::Update, on_exit_system_set)
+      .add_system_set_to_stage(ChapterStage::PreUpdate, prepare_current_frame_set)
+      .add_system_set_to_stage(CoreStage::Update, update_system_set)
+      .add_system_set_to_stage(CoreStage::Update, render_system_set)
+      .add_system_set_to_stage(ChapterStage::PostUpdate, clock_tick_set)
+      .add_system_set_to_stage(ChapterStage::PostUpdate, prepare_next_frame_set)
+    ;
   }
   builder.app
 }

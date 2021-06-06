@@ -18,6 +18,7 @@ pub fn update(
   pos.x += input.x * 500.0 / 60.0;
   pos.y += input.y * 500.0 / 60.0;
   if clock.current_time().ticks % 20 == 0 {
+    println!("Spawned: {}, tick to read: {}", clock.current_time().ticks, clock.ticks_to_read());
     bullet_server.spawn_sora_bullet(&clock, &mut commands, **pos);
   }
 }
