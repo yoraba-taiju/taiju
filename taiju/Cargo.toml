@@ -1,7 +1,13 @@
 [package]
 name = "taiju"
-version = "0.1.0"
-edition = "2021"
+[package.version]
+workspace = true
+[package.edition]
+workspace = true
+[package.authors]
+workspace = true
+[package.license]
+workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
