@@ -13,3 +13,6 @@ workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
+bevy = { workspace = true }
+egui = { workspace = true }
+bevy_egui = { workspace = true }

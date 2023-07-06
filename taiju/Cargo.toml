@@ -13,3 +13,4 @@ workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
+bevy = { workspace = true }
