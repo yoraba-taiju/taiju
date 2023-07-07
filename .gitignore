@@ -140,3 +140,8 @@ Cargo.lock
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/clion,rust,VisualStudioCode
+
+
+# Added by cargo
+
+/target

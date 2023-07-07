@@ -1,9 +1,6 @@
-use bevy::prelude::*;
+use taiju::build_app;
 
 fn main() -> anyhow::Result<()> {
-  App::new()
-    .add_plugins(DefaultPlugins)
-    .add_startup_system()
-    .run();
+  build_app().run();
   Ok(())
 }
