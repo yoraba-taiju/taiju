@@ -11,7 +11,7 @@ pub fn build_app() -> App {
   let mut app = App::new();
   app.add_plugins(DefaultPlugins);
   app.add_state::<GameState>();
-  app.add_systems(PreUpdate, sys.run_if(in_state(GameState::Menu)));
+  app.add_systems(Update, sys.run_if(in_state(GameState::Menu)));
   app
 }
 
