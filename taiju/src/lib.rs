@@ -5,6 +5,7 @@ enum GameState {
   #[default]
   Menu,
   InGame,
+  Exit,
 }
 
 pub fn build_app() -> App {
@@ -12,18 +13,21 @@ pub fn build_app() -> App {
   app.add_plugins(DefaultPlugins);
   app.add_state::<GameState>();
   app.add_systems(Update, sys.run_if(in_state(GameState::Menu)));
+  app.add_systems(Update, exit.run_if(in_state(GameState::InGame)));
   app
 }
 
 fn sys(mut stat: ResMut<State<GameState>>) {
   let current = *stat.get();
-  *stat = match current {
-    GameState::InGame => State::new(GameState::Menu),
-    GameState::Menu => State::new(GameState::InGame),
-  };
-  println!("{:?}", stat.get());
+  *stat = State::new(match current {
+    GameState::InGame => GameState::Menu,
+    GameState::Menu => GameState::InGame,
+    GameState::Exit => GameState::Exit,
+  });
+  println!("{:?} => {:?}", current, stat.get());
 }
 
-fn trans() {
-  println!("Trans!")
+fn exit(mut stat: ResMut<State<GameState>>) {
+  println!("Exit!");
+  *stat = State::new(GameState::Exit);
 }
